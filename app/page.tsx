@@ -1,8 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Zap, Code2, FlaskConical, GraduationCap, Shield, Clock, RefreshCw } from 'lucide-react'
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
+import { ArrowRight, Zap, Code2, FlaskConical, GraduationCap, Shield, Clock, Terminal, Laptop, Activity } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import GigCard from '@/components/gig/GigCard'
@@ -17,27 +16,47 @@ const CATEGORIES = [
 ]
 
 const STATS = [
-  { num: '47+', label: 'Projects Shipped' },
-  { num: '32',  label: 'Vetted Engineers' },
-  { num: '98%', label: 'Delivery Rate'   },
-  { num: '4.9★',label: 'Avg. Rating'     },
+  { num: '47+', label: 'PROJ_SHIPPED' },
+  { num: '32',  label: 'VETTED_DEVS' },
+  { num: '98%', label: 'DELIVERY_RATE' },
+  { num: '4.9★',label: 'AVG_SCORE' },
 ]
 
 const TRUST = [
-  { icon: Shield, title: 'Vetted Talent',       desc: 'Every student is reviewed for skill, communication, and reliability before joining.' },
-  { icon: Clock,  title: 'Managed Delivery',    desc: 'Our team oversees quality at every milestone so you never get a code dump.' },
-  { icon: Zap,    title: 'Transparent Pricing', desc: 'Fixed prices agreed upfront. No hidden costs, no surprises.' },
+  { icon: Shield, title: 'Vetted Talent Protocol', desc: 'Every university engineer is manually audited for clean architectures, communication, and milestone reliability.' },
+  { icon: Clock,  title: 'Escrow Managed Delivery',  desc: 'C-Oasis oversees visual milestones and code review before releasing funds, ensuring zero code-dumps.' },
+  { icon: Zap,    title: 'Fixed Pricing Schema',    desc: 'Bespoke fixed-budget contracts locked upfront in secure escrow. No surprises, no hourly leakages.' },
 ]
+
+const GigCardSkeleton = () => (
+  <div className="cyber-border-container glass-card h-[400px] flex flex-col justify-between p-5 animate-pulse select-none">
+    <div className="relative aspect-[4/3] w-full bg-[var(--paper-dark)] border border-[var(--line)] rounded-lg mb-4" />
+    <div className="space-y-3 flex-1 flex flex-col justify-between">
+      <div className="space-y-2">
+        <div className="flex gap-2">
+          <div className="h-4 bg-[var(--paper-dark)] border border-[var(--line)] rounded w-16" />
+          <div className="h-4 bg-[var(--paper-dark)] border border-[var(--line)] rounded w-12" />
+        </div>
+        <div className="h-5 bg-[var(--paper-dark)] border border-[var(--line)] rounded w-1/3 mt-2" />
+        <div className="h-4 bg-[var(--paper-dark)] border border-[var(--line)] rounded w-full mt-2" />
+        <div className="h-4 bg-[var(--paper-dark)] border border-[var(--line)] rounded w-5/6" />
+      </div>
+      <div className="flex items-center justify-between pt-4 border-t border-[var(--line)] mt-4">
+        <div className="space-y-1">
+          <div className="h-3 bg-[var(--paper-dark)] border border-[var(--line)] rounded w-16" />
+          <div className="h-5 bg-[var(--paper-dark)] border border-[var(--line)] rounded w-24" />
+        </div>
+        <div className="h-4 bg-[var(--paper-dark)] border border-[var(--line)] rounded w-10" />
+      </div>
+    </div>
+  </div>
+)
 
 export default function HomePage() {
   const [gigs, setGigs] = useState<Gig[]>([])
   const [gigsLoading, setGigsLoading] = useState(true)
-  const [pointer, setPointer] = useState({ x: 0, y: 0 })
-  const { scrollYProgress } = useScroll()
-  const progressScaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 20, mass: 0.2 })
-  const heroY = useTransform(scrollYProgress, [0, 0.35], [0, -50])
-  const warmDriftX = useTransform(scrollYProgress, [0, 1], [0, -40])
-  const warmDriftY = useTransform(scrollYProgress, [0, 1], [0, 30])
+  const [isCompiling, setIsCompiling] = useState(false)
+  const [hoverIDE, setHoverIDE] = useState(false)
 
   useEffect(() => {
     fetch('/api/gigs?limit=6&sort=popular')
@@ -47,269 +66,277 @@ export default function HomePage() {
       .finally(() => setGigsLoading(false))
   }, [])
 
+  useEffect(() => {
+    if (hoverIDE) {
+      setIsCompiling(true)
+      const t = setTimeout(() => setIsCompiling(false), 1400)
+      return () => clearTimeout(t)
+    }
+  }, [hoverIDE])
+
   return (
-    <div className="min-h-screen bg-[var(--paper)]">
-      <motion.div style={{ scaleX: progressScaleX }} className="fixed top-0 left-0 right-0 h-[2px] bg-[var(--forest)] z-[600] origin-left" />
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--grey)] font-sans pt-[92px]">
       <Navbar />
 
-      {/* HERO */}
-      <section
-        className="relative pt-16 overflow-hidden"
-        onMouseMove={(e) => {
-          const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-          const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2
-          const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2
-          setPointer({ x, y })
-        }}
-      >
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          style={{ x: warmDriftX, y: warmDriftY }}
-        >
-          <div className="absolute inset-0 boho-glow" />
-          <motion.div
-            className="absolute right-[-10%] top-[5%] w-[52vw] h-[52vw] max-w-[780px] max-h-[780px] rounded-full boho-orb"
-            animate={{ scale: [1, 1.08, 1], rotate: [0, 6, 0] }}
-            transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          <motion.div
-            className="absolute left-[-16%] bottom-[-24%] w-[44vw] h-[44vw] max-w-[700px] max-h-[700px] rounded-full boho-orb-soft"
-            animate={{ scale: [1.02, 1, 1.05], rotate: [0, -5, 0] }}
-            transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        </motion.div>
+      {/* HERO SECTION */}
+      <section className="relative overflow-hidden py-20 lg:py-32 border-b border-[var(--line)]">
+        <div className="absolute top-[10%] right-[10%] w-[500px] h-[500px] rounded-full bg-[var(--paper-dark)]/10 blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-[10%] left-[10%] w-[500px] h-[500px] rounded-full bg-[var(--paper)]/25 blur-[160px] pointer-events-none" />
 
-        <div className="absolute left-5 top-1/2 -translate-y-1/2 -rotate-90 text-[8px] tracking-[5px] uppercase text-[var(--forest)] opacity-25 whitespace-nowrap hidden lg:block select-none">
-          A C C E L E R A T E &nbsp;·&nbsp; I N N O V A T E &nbsp;·&nbsp; C R E A T E
-        </div>
+        <div className="max-w-7xl mx-auto px-6 lg:px-16">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left Copy */}
+            <div className="lg:col-span-5 flex flex-col justify-center text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--paper-dark)]/40 border border-[var(--line)] rounded-full text-[10px] uppercase tracking-[2px] text-[var(--grey)] font-mono-co mb-6 w-fit mx-auto lg:mx-0">
+                <Terminal size={12} />
+                MANAGED COMPILATION PIPELINE
+              </div>
+              <h1 className="font-display text-[40px] md:text-[52px] lg:text-[58px] leading-[1.05] font-semibold text-[var(--charcoal)] mb-8 tracking-tight">
+                Vetted university developers. <br/>
+                Escrowed code delivery.
+              </h1>
+              <p className="text-[14px] leading-[1.8] text-[var(--grey)] max-w-lg mb-10 mx-auto lg:mx-0 font-sans">
+                The boutique tech forge where checked university computer science engineers build high-performance web systems, AI configurations, and technical tools for forward-thinking brands.
+              </p>
+              
+              <div className="flex items-center gap-4 flex-wrap justify-center lg:justify-start">
+                <Link href="/browse"><Button size="lg">Explore Gigs -&gt;</Button></Link>
+                <Link href="/auth/register"><Button variant="outline" size="lg">Verify as Seller</Button></Link>
+              </div>
 
-        <motion.div style={{ y: heroY }} className="max-w-7xl mx-auto px-6 lg:px-16 min-h-[calc(100vh-64px)] flex items-center">
-          <div className="grid lg:grid-cols-2 gap-12 items-center w-full py-16">
-            {/* Left */}
-            <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} className="glass-surface rounded-[10px] px-7 py-8 md:px-9 md:py-10">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-8 h-[0.5px] bg-[var(--forest-light)]" />
-                <span className="text-[9px] uppercase tracking-[4px] text-[var(--forest-light)] font-medium">Managed Student Tech Platform</span>
-              </div>
-              <motion.h1
-                initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 0.9, delay: 0.1 }}
-                className="font-display text-[clamp(38px,5.5vw,70px)] leading-[1.05] font-light text-[var(--charcoal)] mb-6"
-              >
-                Get your college<br/>software projects<br/>done by <em className="text-[var(--forest)]">experts.</em>
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="text-[14px] leading-[1.9] text-[var(--grey)] max-w-md mb-8"
-              >
-                The boutique tech forge where vetted student engineers build AI automation, web apps, and CS projects for brands.
-              </motion.p>
-              <div className="flex items-center gap-4 flex-wrap">
-                <Link href="/browse"><Button size="lg">Browse Gigs →</Button></Link>
-                <Link href="/auth/register"><Button variant="outline" size="lg">Start as Seller</Button></Link>
-              </div>
-              <div className="flex gap-0 mt-12 pt-8 border-t border-[var(--line)]">
-                {STATS.map((s, i) => (
-                  <motion.div
-                    key={s.label}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15 + i * 0.08, duration: 0.45 }}
-                    className={`flex-1 ${i > 0 ? 'border-l border-[var(--line)] pl-5 ml-5' : ''}`}
-                  >
-                    <div className="font-display text-[28px] font-light text-[var(--forest)]">{s.num}</div>
-                    <div className="text-[9px] uppercase tracking-[2px] text-[var(--grey-light)] mt-1">{s.label}</div>
-                  </motion.div>
+              {/* Monospaced Metrics */}
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 mt-16 pt-10 border-t border-[var(--line)] text-left">
+                {STATS.map((s) => (
+                  <div key={s.label} className="space-y-1">
+                    <div className="font-mono-co text-2xl font-semibold text-[var(--charcoal)]">{s.num}</div>
+                    <div className="text-[9px] uppercase tracking-[1.5px] text-[var(--grey-light)] font-mono-co">{s.label}</div>
+                  </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
 
-            {/* Right — SVG Brain */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.9, delay: 0.25 }}
-              className="relative flex items-center justify-center"
-              style={{ transform: `translate3d(${pointer.x * 8}px, ${pointer.y * 6}px, 0)` }}
-            >
-              {[
-                { text: '{ AI_AGENT = }',      top: '6%',  left: '58%', delay: '0s'   },
-                { text: 'import langchain',     top: '18%', left: '74%', delay: '1.8s' },
-                { text: 'model.predict(X)',     top: '52%', left: '66%', delay: '0.9s' },
-                { text: 'async def pipeline()', top: '70%', left: '52%', delay: '2.7s' },
-                { text: 'torch.nn.Module',      top: '36%', left: '2%',  delay: '1.4s' },
-              ].map(tag => (
-                <motion.div
-                  key={tag.text}
-                  className="absolute glass-card px-3 py-1.5 text-[9.5px] font-mono-co text-[var(--forest)] whitespace-nowrap z-10"
-                  style={{ top: tag.top, left: tag.left }}
-                  animate={{ y: [0, -10, 0], opacity: [0.5, 0.95, 0.5] }}
-                  transition={{ duration: 5.8, delay: Number.parseFloat(tag.delay), repeat: Infinity, ease: 'easeInOut' }}
-                >
-                  {tag.text}
-                </motion.div>
-              ))}
-              <svg viewBox="0 0 480 520" xmlns="http://www.w3.org/2000/svg" className="w-full max-w-[460px]">
-                <defs>
-                  <radialGradient id="rg1h" cx="45%" cy="38%" r="55%">
-                    <stop offset="0%" stopColor="#d0e9df" stopOpacity="0.95"/>
-                    <stop offset="55%" stopColor="#a8d4c4" stopOpacity="0.75"/>
-                    <stop offset="100%" stopColor="#1B3D2F" stopOpacity="0.2"/>
-                  </radialGradient>
-                  <linearGradient id="lg1h" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#3ecf8e" stopOpacity="0"/>
-                    <stop offset="40%" stopColor="#3ecf8e" stopOpacity="0.7"/>
-                    <stop offset="100%" stopColor="#1B3D2F" stopOpacity="0"/>
-                  </linearGradient>
-                  <filter id="fsh">
-                    <feDropShadow dx="6" dy="10" stdDeviation="18" floodColor="#1B3D2F" floodOpacity="0.1"/>
-                  </filter>
-                </defs>
-                <ellipse cx="240" cy="248" rx="165" ry="145" fill="#1B3D2F" fillOpacity="0.04"/>
-                <ellipse cx="240" cy="425" rx="98" ry="13" fill="#3a2010" fillOpacity="0.65"/>
-                <rect x="210" y="396" width="60" height="30" rx="3" fill="#3a2010" fillOpacity="0.85"/>
-                <g filter="url(#fsh)">
-                  <path d="M142 292 C130 252 124 208 140 176 C158 144 184 132 212 134 C220 186 216 240 214 292 Z" fill="url(#rg1h)" stroke="#1B3D2F" strokeWidth="0.5" strokeOpacity="0.25"/>
-                  <path d="M160 280 C150 256 146 222 156 198 C170 170 188 160 210 162 C215 200 212 242 210 280 Z" fill="#caeadf" fillOpacity="0.32"/>
-                  <path d="M338 292 C350 252 356 208 340 176 C322 144 296 132 268 134 C260 186 264 240 266 292 Z" fill="url(#rg1h)" stroke="#1B3D2F" strokeWidth="0.5" strokeOpacity="0.25"/>
-                  <path d="M320 280 C330 256 334 222 324 198 C310 170 292 160 270 162 C265 200 268 242 270 280 Z" fill="#caeadf" fillOpacity="0.32"/>
-                  <path d="M214 292 C213 334 218 368 240 396 C262 368 267 334 266 292 Z" fill="url(#rg1h)"/>
-                  <path d="M200 134 L214 112 L240 100 L266 112 L280 134" fill="url(#rg1h)" stroke="#1B3D2F" strokeWidth="0.4" strokeOpacity="0.28"/>
-                  <path d="M214 112 L240 86 L266 112" fill="url(#rg1h)" stroke="#1B3D2F" strokeWidth="0.4" strokeOpacity="0.28"/>
-                  <path d="M228 100 L240 84 L252 100 L240 107 Z" fill="white" fillOpacity="0.3"/>
-                  <line x1="240" y1="134" x2="240" y2="394" stroke="#1B3D2F" strokeWidth="0.25" strokeOpacity="0.1"/>
-                  <line x1="142" y1="226" x2="338" y2="226" stroke="#1B3D2F" strokeWidth="0.25" strokeOpacity="0.07"/>
-                </g>
-                <path d="M178 320 C170 298 163 266 172 236 C181 206 190 180 200 158" stroke="url(#lg1h)" strokeWidth="0.9" fill="none">
-                  <animate attributeName="opacity" values="0.3;0.8;0.3" dur="4s" repeatCount="indefinite"/>
-                </path>
-                <path d="M302 322 C310 300 316 268 307 238 C298 208 289 182 278 160" stroke="url(#lg1h)" strokeWidth="0.9" fill="none">
-                  <animate attributeName="opacity" values="0.25;0.7;0.25" dur="5s" begin="1s" repeatCount="indefinite"/>
-                </path>
-                {([[156,238],[170,192],[314,234],[240,346]] as [number,number][]).map(([cx,cy],i) => (
-                  <circle key={i} cx={cx} cy={cy} r="3.5" fill="#3ecf8e" fillOpacity="0.45">
-                    <animate attributeName="opacity" values="0.25;0.65;0.25" dur={`${3+i*0.4}s`} begin={`${i*0.8}s`} repeatCount="indefinite"/>
-                  </circle>
-                ))}
-              </svg>
-            </motion.div>
+            {/* Right: Premium Interactive IDE Code Stream & App wireframe preview */}
+            <div className="lg:col-span-7 flex justify-center w-full">
+              <div 
+                className="w-full max-w-[620px] cyber-border-container p-1 bg-[var(--paper-dark)]/80 glass-panel overflow-hidden cursor-pointer"
+                onMouseEnter={() => setHoverIDE(true)}
+                onMouseLeave={() => setHoverIDE(false)}
+              >
+                {/* Editor Header */}
+                <div className="flex justify-between items-center px-4 py-2 border-b border-[var(--line)] bg-[var(--paper-dark)]">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[var(--line-hover)]" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[var(--line-hover)]" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[var(--line-hover)]" />
+                    <span className="text-[10px] text-[var(--grey-light)] font-mono-co ml-3 uppercase tracking-wider">compiler.config.ts</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[9px] font-mono-co text-[var(--grey)] bg-[var(--paper)] border border-[var(--line)] px-2 py-0.5 rounded">
+                    <Laptop size={10} className="text-[var(--grey)]" />
+                    NODE_ACTIVE
+                  </div>
+                </div>
+
+                {/* Editor Workspace split container */}
+                <div className="grid grid-cols-1 md:grid-cols-12 h-[340px] font-mono-co">
+                  
+                  {/* Left Sidebar or Code editor panel */}
+                  <div className="col-span-7 p-4 border-r border-[var(--line)] overflow-hidden text-[10.5px] leading-relaxed relative flex flex-col justify-between">
+                    <div className="space-y-1">
+                      <div><span className="text-[var(--grey-light)]">import</span> &#123; <span className="text-[var(--charcoal)] font-medium">AgentEscrow</span> &#125; <span className="text-[var(--grey-light)]">from</span> <span className="text-[var(--grey)]">&apos;@oasis/core&apos;</span></div>
+                      <div><span className="text-[var(--grey-light)]">import</span> &#123; <span className="text-[var(--charcoal)] font-medium">NextAuth</span> &#125; <span className="text-[var(--grey-light)]">from</span> <span className="text-[var(--grey)]">&apos;jose&apos;</span></div>
+                      <div className="text-slate-500/70">// Initiate secure pipeline</div>
+                      <div><span className="text-[var(--grey-light)]">const</span> <span className="text-[var(--charcoal)]">node</span> = <span className="text-[var(--grey-light)]">new</span> <span className="text-[var(--charcoal)]">AgentEscrow</span>(&#123;</div>
+                      <div className="pl-4">id: <span className="text-[var(--grey)]">&apos;NODE_VERIFY_2.1&apos;</span>,</div>
+                      <div className="pl-4">rateLimit: <span className="text-[var(--grey-light)]">true</span>,</div>
+                      <div className="pl-4">compilation: <span className="text-[var(--grey)]">&apos;TURBOPACK&apos;</span></div>
+                      <div>&#125;)</div>
+                      <div className="text-slate-500/70 mt-2">// Escrow contract checks</div>
+                      <div><span className="text-[var(--grey-light)]">async function</span> <span className="text-emerald-600 dark:text-emerald-400 font-medium">deployNode</span>(developerId) &#123;</div>
+                      <div className="pl-4"><span className="text-[var(--grey-light)]">const</span> verified = <span className="text-[var(--grey-light)]">await</span> node.<span className="text-emerald-650 dark:text-emerald-450">audit</span>(developerId)</div>
+                      <div className="pl-4"><span className="text-[var(--grey-light)]">if</span> (verified) &#123;</div>
+                      <div className="pl-8"><span className="text-[var(--grey-light)]">return</span> <span className="text-[var(--grey-light)]">await</span> node.<span className="text-emerald-650 dark:text-emerald-450">compileWireframe</span>()</div>
+                      <div className="pl-4">&#125;</div>
+                      <div>&#125;</div>
+                    </div>
+
+                    {/* Interactive Compilation Status bar */}
+                    <div className="mt-4 p-2 bg-[var(--paper)] border border-[var(--line)] rounded flex items-center justify-between">
+                      <span className="text-[9px] text-[var(--grey-light)]">SYSTEM_OUTPUT</span>
+                      {isCompiling ? (
+                        <span className="text-[9px] text-[var(--grey)] flex items-center gap-1.5 animate-pulse">
+                          <Activity size={10} className="animate-spin" />
+                          COMPILING_WIRE...
+                        </span>
+                      ) : (
+                        <span className="text-[9px] text-[var(--grey)] flex items-center gap-1">
+                          ● READY_STATE
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right Browser Wireframe Viewport Mockup */}
+                  <div className="col-span-5 p-4 bg-[var(--paper)]/10 relative overflow-hidden flex flex-col justify-between">
+                    {/* Browser Address bar */}
+                    <div className="w-full py-1 px-2.5 bg-[var(--paper-dark)]/85 border border-[var(--line)] rounded text-[8.5px] text-[var(--grey)] mb-4 select-none truncate">
+                      https://c-oasis.dev/preview
+                    </div>
+
+                    {/* Wireframe Preview Canvas */}
+                    <div className="flex-1 border border-[var(--line)] rounded bg-[var(--paper-dark)]/50 p-2.5 flex flex-col gap-2 relative">
+                      {isCompiling ? (
+                        <div className="absolute inset-0 bg-[var(--paper-dark)]/85 flex flex-col items-center justify-center gap-2 z-20">
+                          <div className="w-4 h-4 border-2 border-[var(--line-hover)] border-t-transparent rounded-full animate-spin" />
+                          <span className="text-[8px] tracking-[1.5px] uppercase text-[var(--grey)] animate-pulse">Building Node</span>
+                        </div>
+                      ) : null}
+
+                      {/* Mock Stat Cards */}
+                      <div className="flex justify-between gap-1.5">
+                        <div className="flex-1 bg-[var(--paper)] border border-[var(--line)] p-1.5 rounded flex flex-col gap-1">
+                          <span className="text-[6px] text-[var(--grey-light)] uppercase tracking-wider">Node Escrow</span>
+                          <span className="text-[10px] font-semibold text-[var(--charcoal)] font-sans">₹12,400</span>
+                        </div>
+                        <div className="flex-1 bg-[var(--paper)] border border-[var(--line)] p-1.5 rounded flex flex-col gap-1">
+                          <span className="text-[6px] text-[var(--grey-light)] uppercase tracking-wider">KPI Uptime</span>
+                          <span className="text-[10px] font-semibold text-[var(--charcoal)] font-sans">99.88%</span>
+                        </div>
+                      </div>
+
+                      {/* Mock Chart Area */}
+                      <div className="flex-1 border border-[var(--line)] bg-[var(--paper-dark)]/80 rounded p-1 flex flex-col justify-end gap-1 overflow-hidden relative">
+                        <div className="absolute top-1 left-1.5 text-[5.5px] text-[var(--grey-light)] uppercase tracking-widest">LIVE_SIGNAL_METRICS</div>
+                        <div className="flex items-end justify-between gap-1 h-[32px] px-1">
+                          <div className="w-full bg-[var(--line-hover)] h-[10%] rounded-sm" />
+                          <div className="w-full bg-[var(--line-hover)] h-[30%] rounded-sm" />
+                          <div className="w-full bg-[var(--grey)]/40 h-[60%] rounded-sm" />
+                          <div className="w-full bg-[var(--grey)]/60 h-[80%] rounded-sm" />
+                          <div className="w-full bg-[var(--grey)]/60 h-[50%] rounded-sm" />
+                          <div className="w-full bg-[var(--grey)] h-[95%] rounded-sm" />
+                        </div>
+                      </div>
+
+                      {/* Compiling Success Indicator */}
+                      <div className="text-[7.5px] text-center text-[var(--charcoal)] bg-[var(--paper)] border border-[var(--line)] py-1 rounded tracking-wide uppercase font-semibold">
+                        PREVIEW COMPILED OK
+                      </div>
+                    </div>
+
+                    <div className="text-center text-[7.5px] text-[var(--grey-light)] font-mono-co mt-2 uppercase select-none">
+                      Hover to trigger reload
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
-        </motion.div>
+        </div>
       </section>
 
-      {/* CATEGORIES */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.35 }}
-        transition={{ duration: 0.5 }}
-        className="border-t border-b border-[var(--line)] bg-[var(--paper-dark)]/60"
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-16 py-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-0">
-            {CATEGORIES.map((cat, i) => {
+      {/* CATEGORIES SECTION */}
+      <section className="border-b border-[var(--line)] bg-[var(--paper-dark)]/40 relative">
+        <div className="max-w-7xl mx-auto px-6 lg:px-16 py-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {CATEGORIES.map((cat) => {
               const Icon = cat.icon
               return (
-                <Link key={cat.label} href={`/browse?category=${encodeURIComponent(cat.label)}`}
-                  className={`flex items-center gap-4 p-6 group transition-colors hover:bg-white/20 glass-surface-soft ${i > 0 ? 'border-l border-[var(--line)]' : ''}`}>
-                  <div className="w-9 h-9 border border-[var(--line)] flex items-center justify-center group-hover:border-[var(--forest)] transition-colors">
-                    <Icon size={16} className="text-[var(--grey)] group-hover:text-[var(--forest)] transition-colors" />
+                <Link 
+                  key={cat.label} 
+                  href={`/browse?category=${encodeURIComponent(cat.label)}`}
+                  className="cyber-border-container p-5 flex items-center gap-4 group transition-all duration-300 hover:border-[var(--line-hover)]"
+                >
+                  <div className="w-9 h-9 border border-[var(--line)] rounded-lg flex items-center justify-center bg-[var(--paper-dark)] group-hover:border-[var(--line-hover)] transition-all duration-300">
+                    <Icon size={14} className="text-[var(--grey-light)] group-hover:text-[var(--charcoal)] transition-colors duration-300" />
                   </div>
                   <div>
-                    <div className="text-[13px] text-[var(--charcoal)] group-hover:text-[var(--forest)] transition-colors">{cat.label}</div>
-                    <div className="text-[10px] text-[var(--grey-light)] mt-0.5">{cat.count} gigs</div>
+                    <div className="text-[12px] font-mono-co font-semibold text-[var(--grey)] group-hover:text-[var(--charcoal)] transition-colors duration-300">{cat.label}</div>
+                    <div className="text-[9px] font-mono-co text-[var(--grey-light)] mt-0.5">{cat.count} nodes active</div>
                   </div>
                 </Link>
               )
             })}
           </div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* FEATURED GIGS */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.55 }}
-        className="max-w-7xl mx-auto px-6 lg:px-16 py-20"
-      >
-        <div className="flex items-end justify-between mb-10 glass-surface-soft rounded-[10px] px-6 py-5">
+      {/* POPULAR GIGS FEED */}
+      <section className="max-w-7xl mx-auto px-6 lg:px-16 py-28">
+        <div className="cyber-border-container p-6 flex flex-col sm:flex-row items-center sm:items-end justify-between mb-14 gap-4 bg-[var(--paper-dark)]/20">
           <div>
-            <p className="flex items-center gap-3 text-[9px] uppercase tracking-[4px] text-[var(--forest-light)] mb-3">
-              <span className="w-6 h-[0.5px] bg-[var(--forest-light)] inline-block"/>Featured Work
-            </p>
-            <h2 className="font-display text-[40px] font-light text-[var(--charcoal)]">Popular <em className="text-[var(--forest)]">Gigs</em></h2>
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-[var(--paper-dark)]/40 border border-[var(--line)] rounded-md text-[9px] uppercase tracking-[1.5px] text-[var(--grey)] font-mono-co mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--grey-light)] shrink-0" />
+              Verified Escrows
+            </div>
+            <h2 className="font-display text-3xl font-semibold text-[var(--charcoal)] tracking-tight">Active compiler nodes</h2>
           </div>
-          <Link href="/browse" className="flex items-center gap-2 text-[10px] uppercase tracking-[2px] text-[var(--forest)] opacity-65 hover:opacity-100 transition-opacity">
-            View All <ArrowRight size={12}/>
+          <Link href="/browse" className="flex items-center gap-2 text-[10px] uppercase tracking-[2px] font-mono-co text-[var(--grey)] hover:text-[var(--charcoal)] font-semibold transition-colors shrink-0">
+            Audit All Contracts <ArrowRight size={12}/>
           </Link>
         </div>
+
         {gigsLoading ? (
-          <div className="flex justify-center py-20"><RefreshCw size={24} className="animate-spin text-[var(--grey-light)]"/></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <GigCardSkeleton />
+            <GigCardSkeleton />
+            <GigCardSkeleton />
+          </div>
         ) : gigs.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-[var(--grey)] font-[Jost]">No gigs published yet. Be the first seller!</p>
+          <div className="cyber-border-container glass-card p-20 text-center">
+            <p className="text-[var(--grey)] font-mono-co text-sm">No verified contracts active in this network segment.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {gigs.map(gig => <GigCard key={gig.id} gig={gig}/>)}
           </div>
         )}
-      </motion.section>
+      </section>
 
-      {/* TRUST */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.28 }}
-        transition={{ duration: 0.55 }}
-        className="bg-[var(--forest)]/90 py-20"
-      >
+      {/* MANAGED DIFFERENCE TRUST SECTION */}
+      <section className="bg-[var(--paper-dark)]/40 border-t border-b border-[var(--line)] py-28 relative">
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[var(--line-hover)] to-transparent" />
+        
         <div className="max-w-7xl mx-auto px-6 lg:px-16">
-          <p className="flex items-center gap-3 text-[9px] uppercase tracking-[4px] text-[var(--teal-pale)] opacity-60 mb-3">
-            <span className="w-6 h-[0.5px] bg-[var(--teal-pale)] opacity-60 inline-block"/>Why Craftsmanship Oasis
-          </p>
-          <h2 className="font-display text-[40px] font-light text-[var(--paper)] mb-14">The <em className="text-[var(--teal-pale)]">Managed</em> Difference</h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            {TRUST.map((item, i) => {
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-[var(--paper-dark)] border border-[var(--line)] rounded-md text-[9px] uppercase tracking-[1.5px] text-[var(--grey)] font-mono-co mb-3">
+            OASIS MANAGED ESCROW
+          </div>
+          <h2 className="font-display text-3xl font-semibold text-[var(--charcoal)] mb-20 tracking-tight">Vetted security, direct compiler links</h2>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            {TRUST.map((item) => {
               const Icon = item.icon
               return (
-                <div key={item.title} className={`p-10 glass-surface-soft rounded-[10px] ${i > 0 ? 'md:border-l md:border-white/10' : ''}`}>
-                  <div className="w-10 h-10 border border-white/20 flex items-center justify-center mb-6">
-                    <Icon size={18} className="text-[var(--teal-pale)]" />
+                <div key={item.title} className="cyber-border-container p-8 relative flex flex-col justify-between bg-[var(--paper-dark)]/40">
+                  <div>
+                    <div className="w-10 h-10 border border-[var(--line)] rounded-xl flex items-center justify-center mb-6 bg-[var(--paper-dark)]">
+                      <Icon size={16} className="text-[var(--grey)]" />
+                    </div>
+                    <h3 className="font-display text-[18px] font-semibold text-[var(--charcoal)] mb-3 tracking-tight">{item.title}</h3>
+                    <p className="text-[12.5px] text-[var(--grey)] leading-relaxed font-sans">{item.desc}</p>
                   </div>
-                  <h3 className="font-display text-[22px] font-light text-[var(--paper)] mb-3">{item.title}</h3>
-                  <p className="text-[12px] text-white/45 leading-relaxed">{item.desc}</p>
                 </div>
               )
             })}
           </div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* CTA */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.45 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-7xl mx-auto px-6 lg:px-16 py-20 flex flex-col md:flex-row items-center justify-between gap-8 border-b border-[var(--line)] glass-surface-soft rounded-[10px]"
-      >
-        <div>
-          <h2 className="font-display text-[36px] font-light text-[var(--charcoal)] mb-2">
-            Ready to build something <em className="text-[var(--forest)]">great?</em>
-          </h2>
-          <p className="text-[13px] text-[var(--grey)]">Browse 580+ student-built services or post your project.</p>
+      {/* CTA SECTION */}
+      <section className="max-w-7xl mx-auto px-6 lg:px-16 py-28">
+        <div className="cyber-border-container p-12 lg:p-16 flex flex-col md:flex-row items-center justify-between gap-8 bg-[var(--paper-dark)]/40 border border-[var(--line)] shadow-xl">
+          <div className="text-center md:text-left">
+            <h2 className="font-display text-3xl font-semibold text-[var(--charcoal)] mb-2 tracking-tight">
+              Ready to verify a software node?
+            </h2>
+            <p className="text-[13px] text-[var(--grey)] font-sans">Deploy fixed-budget contracts to checked computer science engineers in minutes.</p>
+          </div>
+          <div className="flex gap-4 shrink-0">
+            <Link href="/browse"><Button size="lg">Explore Gigs</Button></Link>
+            <Link href="/auth/register"><Button variant="outline" size="lg">Verify as Seller</Button></Link>
+          </div>
         </div>
-        <div className="flex gap-3">
-          <Link href="/browse"><Button size="lg">Browse Gigs</Button></Link>
-          <Link href="/auth/register"><Button variant="outline" size="lg">Join as Seller</Button></Link>
-        </div>
-      </motion.section>
+      </section>
 
       <Footer />
     </div>
