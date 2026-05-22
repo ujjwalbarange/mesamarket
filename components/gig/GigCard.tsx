@@ -25,9 +25,9 @@ export default function GigCard({ gig }: GigCardProps) {
   return (
     <Link href={`/gig/${gig.id}`} className="group block h-full">
       <motion.div 
-        className="cyber-border-container glass-card h-full flex flex-col justify-between overflow-hidden cursor-pointer transition-all duration-300 hover:border-[var(--line-hover)]"
+        className="cyber-border-container glass-card depth-sm h-full flex flex-col justify-between overflow-hidden cursor-pointer transition-all duration-300 hover:border-[var(--line-hover)] hover:depth-lg"
         initial={{ y: 0 }}
-        whileHover={{ y: -4 }}
+        whileHover={{ y: -6 }}
         transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       >
         {/* Top Segment: Fixed aspect ratio image with objects cover */}

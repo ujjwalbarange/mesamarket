@@ -1,260 +1,573 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Inter+Tight:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700&family=Inter+Tight:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════════════
+   LIGHT MODE — Alpenglow Sunrise Horizon
+   ═══════════════════════════════════════════════════════════════════ */
 :root {
-  /* Minimalist Luxury-Tech Core Accent Color */
-  --forest: #10B981;        /* Emerald (Used very sparingly, <10% for primary actions) */
-  --forest-mid: #059669;    /* Muted Emerald */
-  --forest-light: #34D399;  /* Muted Emerald Glow */
-  --teal: #10B981;          /* Align with accent */
-  --teal-pale: #E2E8F0;     /* Muted Silver */
+  /* Accent */
+  --forest: #10B981;
+  --forest-mid: #059669;
+  --forest-light: #34D399;
 
-  /* 1. Canvas Background */
-  --paper: #F8FAFC;                     /* Soft Architectural Off-White */
-  --paper-dark: #FFFFFF;                /* Secondary Background (pure white in light mode) */
-  --radial-glow: radial-gradient(circle at 50% 30%, rgba(15, 23, 42, 0.03), transparent 70%);
+  /* Horizon backgrounds */
+  --hero-bg: url('/hero-light.png');
+  --hero-overlay: linear-gradient(
+    to bottom,
+    rgba(200, 216, 232, 0.18) 0%,
+    rgba(232, 201, 160, 0.08) 60%,
+    rgba(200, 216, 232, 0.35) 100%
+  );
 
-  /* 2. Glass Cards & Panels */
-  --glass-bg: rgba(255, 255, 255, 0.75); /* Semi-transparent crisp white glass */
-  --glass-border: rgba(15, 23, 42, 0.08); /* Faint ambient slate line */
-  
-  /* 3. Text & Headings */
-  --charcoal: #0F172A;                  /* Deep, solid premium ink-slate */
-  --grey: #475569;                      /* Soft steel-gray */
-  --grey-light: #64748B;                /* Muted slate-gray */
-  --line: rgba(15, 23, 42, 0.08);        /* Razor-thin 1px stroke using a soft gray tint */
-  --line-hover: rgba(15, 23, 42, 0.15);
+  /* Canvas */
+  --paper: #EFF4F8;
+  --paper-dark: #FFFFFF;
+  --radial-glow: radial-gradient(ellipse at 50% 0%, rgba(100,149,200,0.12), transparent 65%);
 
-  /* 4. Input Fields (Idle / Focus) */
-  --input-bg: #FFFFFF;                  /* Pure white background */
-  --input-border: #E2E8F0;              /* Soft gray tint */
-  --input-placeholder: #94A3B8;
+  /* Glass cards — light horizon */
+  --glass-bg: rgba(255, 255, 255, 0.38);
+  --glass-bg-heavy: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-border-subtle: rgba(15, 23, 42, 0.07);
+  --glass-blur: 24px;
 
-  /* 5. Google SSO & Role Toggles */
-  --sso-bg: #FFFFFF;                    /* Clean white surface */
-  --sso-text: #0F172A;                  /* Deep ink text */
-  --sso-border: #E2E8F0;                /* Crisp gray border */
-  --sso-hover-bg: #F8FAFC;
-  --sso-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 2px 8px rgba(15, 23, 42, 0.06);
+  /* Text */
+  --charcoal: #0C1A2E;
+  --grey: #3A4F6A;
+  --grey-light: #6B84A0;
+  --grey-xlight: #9BB2C8;
 
-  --capsule-bg: #F1F5F9;                /* Soft gray capsule track */
+  /* Strokes */
+  --line: rgba(255, 255, 255, 0.55);
+  --line-hover: rgba(255, 255, 255, 0.85);
+  --line-solid: rgba(15, 23, 42, 0.10);
 
-  /* Extra Boho variables mapped to relative equivalents to ensure other pages align */
+  /* Inputs — light */
+  --input-bg: rgba(255, 255, 255, 0.60);
+  --input-border: rgba(255, 255, 255, 0.70);
+  --input-border-focus: rgba(100, 149, 200, 0.60);
+  --input-placeholder: #8CA5BE;
+  --input-text: #0C1A2E;
+
+  /* SSO + toggles */
+  --sso-bg: rgba(255, 255, 255, 0.55);
+  --sso-text: #0C1A2E;
+  --sso-border: rgba(255, 255, 255, 0.70);
+  --sso-hover-bg: rgba(255, 255, 255, 0.78);
+  --sso-shadow: 0 2px 16px rgba(12, 26, 46, 0.06);
+  --capsule-bg: rgba(200, 216, 232, 0.45);
+  --capsule-border: rgba(255, 255, 255, 0.50);
+
+  /* Nav */
+  --nav-bg: rgba(239, 244, 248, 0.72);
+  --nav-border: rgba(255, 255, 255, 0.50);
+
+  /* Semantic surface */
+  --surface: rgba(255, 255, 255, 0.30);
+  --surface-hover: rgba(255, 255, 255, 0.55);
+
+  /* Theme transition speed */
+  --theme-speed: 0.8s;
+
+  /* Legacy aliases */
+  --teal: #10B981;
+  --teal-pale: #E2E8F0;
+  --paper-dark: #FFFFFF;
   --boho-warm: var(--charcoal);
   --boho-cream: var(--input-bg);
   --boho-clay: var(--grey);
-  --coastal-blue: var(--input-border);
+  --coastal-blue: var(--line-solid);
+  --coastal-sea: var(--grey-light);
+  --coastal-sand: var(--paper-dark);
+  --line-hover: rgba(15, 23, 42, 0.12);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   DARK MODE via media query — Twilight Horizon (system fallback)
+   ═══════════════════════════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --hero-bg: url('/hero-dark.png');
+    --hero-overlay: linear-gradient(
+      to bottom,
+      rgba(8, 9, 26, 0.22) 0%,
+      rgba(13, 27, 62, 0.12) 50%,
+      rgba(8, 9, 26, 0.42) 100%
+    );
+
+    --paper: #080912;
+    --paper-dark: #0D1120;
+    --radial-glow: radial-gradient(ellipse at 50% 0%, rgba(30,58,95,0.20), transparent 65%);
+
+    --glass-bg: rgba(15, 23, 42, 0.28);
+    --glass-bg-heavy: rgba(10, 15, 32, 0.80);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-border-subtle: rgba(255, 255, 255, 0.04);
+    --glass-blur: 24px;
+
+    --charcoal: #E8EFF8;
+    --grey: #8BA4C0;
+    --grey-light: #5A7590;
+    --grey-xlight: #3A5570;
+
+    --line: rgba(255, 255, 255, 0.07);
+    --line-hover: rgba(255, 255, 255, 0.15);
+    --line-solid: rgba(255, 255, 255, 0.06);
+
+    --input-bg: rgba(15, 23, 42, 0.55);
+    --input-border: rgba(255, 255, 255, 0.09);
+    --input-border-focus: rgba(100, 149, 200, 0.45);
+    --input-placeholder: #4A6580;
+    --input-text: #E8EFF8;
+
+    --sso-bg: rgba(15, 23, 42, 0.55);
+    --sso-text: #E8EFF8;
+    --sso-border: rgba(255, 255, 255, 0.09);
+    --sso-hover-bg: rgba(20, 30, 55, 0.70);
+    --sso-shadow: none;
+    --capsule-bg: rgba(8, 12, 28, 0.60);
+    --capsule-border: rgba(255, 255, 255, 0.07);
+
+    --nav-bg: rgba(8, 9, 26, 0.65);
+    --nav-border: rgba(255, 255, 255, 0.07);
+
+    --surface: rgba(15, 23, 42, 0.28);
+    --surface-hover: rgba(20, 30, 55, 0.45);
+
+    /* Legacy aliases */
+    --teal: #10B981;
+    --teal-pale: #1E293B;
+    --boho-warm: var(--charcoal);
+    --boho-cream: var(--input-bg);
+    --boho-clay: var(--grey);
+    --coastal-blue: var(--line-solid);
+    --coastal-sea: var(--grey-light);
+    --coastal-sand: var(--paper-dark);
+    --sso-shadow: none;
+    --glass-border: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   DARK MODE via class override — Twilight Horizon
+   ═══════════════════════════════════════════════════════════════════ */
+:root.dark {
+  --hero-bg: url('/hero-dark.png');
+  --hero-overlay: linear-gradient(
+    to bottom,
+    rgba(8, 9, 26, 0.22) 0%,
+    rgba(13, 27, 62, 0.12) 50%,
+    rgba(8, 9, 26, 0.42) 100%
+  );
+
+  --paper: #080912;
+  --paper-dark: #0D1120;
+  --radial-glow: radial-gradient(ellipse at 50% 0%, rgba(30,58,95,0.20), transparent 65%);
+
+  --glass-bg: rgba(15, 23, 42, 0.28);
+  --glass-bg-heavy: rgba(10, 15, 32, 0.80);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-subtle: rgba(255, 255, 255, 0.04);
+  --glass-blur: 24px;
+
+  --charcoal: #E8EFF8;
+  --grey: #8BA4C0;
+  --grey-light: #5A7590;
+  --grey-xlight: #3A5570;
+
+  --line: rgba(255, 255, 255, 0.07);
+  --line-hover: rgba(255, 255, 255, 0.15);
+  --line-solid: rgba(255, 255, 255, 0.06);
+
+  --input-bg: rgba(15, 23, 42, 0.55);
+  --input-border: rgba(255, 255, 255, 0.09);
+  --input-border-focus: rgba(100, 149, 200, 0.45);
+  --input-placeholder: #4A6580;
+  --input-text: #E8EFF8;
+
+  --sso-bg: rgba(15, 23, 42, 0.55);
+  --sso-text: #E8EFF8;
+  --sso-border: rgba(255, 255, 255, 0.09);
+  --sso-hover-bg: rgba(20, 30, 55, 0.70);
+  --sso-shadow: none;
+  --capsule-bg: rgba(8, 12, 28, 0.60);
+  --capsule-border: rgba(255, 255, 255, 0.07);
+
+  --nav-bg: rgba(8, 9, 26, 0.65);
+  --nav-border: rgba(255, 255, 255, 0.07);
+
+  --surface: rgba(15, 23, 42, 0.28);
+  --surface-hover: rgba(20, 30, 55, 0.45);
+
+  /* Legacy aliases */
+  --teal: #10B981;
+  --teal-pale: #1E293B;
+  --boho-warm: var(--charcoal);
+  --boho-cream: var(--input-bg);
+  --boho-clay: var(--grey);
+  --coastal-blue: var(--line-solid);
   --coastal-sea: var(--grey-light);
   --coastal-sand: var(--paper-dark);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    /* 1. Canvas Background */
-    --paper: #030712;                     /* Deep Matte Slate */
-    --paper-dark: #0B0F19;                /* Secondary Background */
-    --radial-glow: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.02), transparent 60%);
+/* ═══════════════════════════════════════════════════════════════════
+   GLOBAL RESETS & BASE
+   ═══════════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; }
 
-    /* 2. Glass Cards & Panels */
-    --glass-bg: rgba(15, 23, 42, 0.65);  /* Semi-transparent charcoal glass */
-    --glass-border: rgba(255, 255, 255, 0.04);
-    
-    /* 3. Text & Headings */
-    --charcoal: #F8FAFC;                  /* High-contrast pure white/silver */
-    --grey: #94A3B8;                      /* Body copy - Muted Silver */
-    --grey-light: #64748B;                /* Muted slate-gray */
-    --line: rgba(255, 255, 255, 0.05);    /* Razor-thin 1px stroke using low-opacity white tint */
-    --line-hover: rgba(255, 255, 255, 0.1);
-
-    /* 4. Input Fields (Idle / Focus) */
-    --input-bg: #0F172A;                  /* Solid dark slate */
-    --input-border: #1E293B;              /* Razor-thin 1px stroke */
-    --input-placeholder: #475569;
-
-    /* 5. Google SSO & Role Toggles */
-    --sso-bg: #0F172A;                    /* Dark surface */
-    --sso-text: #F8FAFC;                  /* White text */
-    --sso-border: #1E293B;                /* Low-opacity border */
-    --sso-hover-bg: #1E293B;
-    --sso-shadow: none;
-
-    --capsule-bg: #030712;                /* Dark slate capsule track */
-  }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+  overscroll-behavior: none;
+  /* Smooth color transitions during theme toggle */
+  transition:
+    background-color var(--theme-speed) cubic-bezier(0.4, 0, 0.2, 1),
+    color var(--theme-speed) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-:root.dark {
-  /* 1. Canvas Background */
-  --paper: #030712;                     /* Deep Matte Slate */
-  --paper-dark: #0B0F19;                /* Secondary Background */
-  --radial-glow: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.02), transparent 60%);
-
-  /* 2. Glass Cards & Panels */
-  --glass-bg: rgba(15, 23, 42, 0.65);  /* Semi-transparent charcoal glass */
-  --glass-border: rgba(255, 255, 255, 0.04);
-  
-  /* 3. Text & Headings */
-  --charcoal: #F8FAFC;                  /* High-contrast pure white/silver */
-  --grey: #94A3B8;                      /* Body copy - Muted Silver */
-  --grey-light: #64748B;                /* Muted slate-gray */
-  --line: rgba(255, 255, 255, 0.05);    /* Razor-thin 1px stroke using low-opacity white tint */
-  --line-hover: rgba(255, 255, 255, 0.1);
-
-  /* 4. Input Fields (Idle / Focus) */
-  --input-bg: #0F172A;                  /* Solid dark slate */
-  --input-border: #1E293B;              /* Razor-thin 1px stroke */
-  --input-placeholder: #475569;
-
-  /* 5. Google SSO & Role Toggles */
-  --sso-bg: #0F172A;                    /* Dark surface */
-  --sso-text: #F8FAFC;                  /* White text */
-  --sso-border: #1E293B;                /* Low-opacity border */
-  --sso-hover-bg: #1E293B;
-  --sso-shadow: none;
-
-  --capsule-bg: #030712;                /* Dark slate capsule track */
-}
-
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
 body {
   background-color: var(--paper);
-  background-image: var(--radial-glow);
   font-family: 'Inter', sans-serif;
-  font-weight: 400;
+  font-weight: 300;
+  letter-spacing: 0.01em;
   color: var(--grey);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition:
+    background-color var(--theme-speed) cubic-bezier(0.4, 0, 0.2, 1),
+    color var(--theme-speed) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Premium Minimalist Scrollbar */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: var(--paper); }
+/* Apply transition to all elements for smooth theme switch */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow, opacity, backdrop-filter;
+  transition-duration: var(--theme-speed);
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Exclude animations from transition override */
+.animate-spin, .animate-pulse, .animate-bounce {
+  transition: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: var(--line);
+  background: var(--glass-border);
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--grey-light); }
 
-.font-display { font-family: 'Inter Tight', sans-serif; font-weight: 600; tracking: -0.02em; }
+/* ═══════════════════════════════════════════════════════════════════
+   TYPOGRAPHY
+   ═══════════════════════════════════════════════════════════════════ */
+.font-display {
+  font-family: 'Inter Tight', 'Inter', sans-serif;
+  font-weight: 200;
+  letter-spacing: 0.04em;
+}
+.font-display-medium {
+  font-family: 'Inter Tight', 'Inter', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
 .font-mono-co { font-family: 'JetBrains Mono', monospace; }
 
-/* Thin Muted Glassmorphic Container */
-.cyber-border-container {
+/* ═══════════════════════════════════════════════════════════════════
+   CINEMATIC HERO — Fixed landscape background
+   ═══════════════════════════════════════════════════════════════════ */
+.horizon-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: var(--hero-bg);
+  background-size: cover;
+  background-position: center 60%;
+  background-repeat: no-repeat;
+  z-index: 0;
+  transition:
+    background-image 0s,
+    opacity var(--theme-speed) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.horizon-overlay {
+  position: fixed;
+  inset: 0;
+  background-image: var(--hero-overlay);
+  z-index: 1;
+  pointer-events: none;
+  transition: background-image var(--theme-speed) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.horizon-content {
   position: relative;
-  background: var(--glass-bg);
-  border-radius: 12px;
-  border: 1px solid var(--line);
+  z-index: 10;
 }
 
-/* Muted solid inputs for clean aesthetic */
-.input-underline {
-  background: var(--input-bg) !important;
-  border: 1px solid var(--input-border) !important;
-  border-radius: 6px !important;
-  padding: 10px 14px !important;
-  font-size: 13px !important;
-  font-family: 'Inter', sans-serif !important;
-  font-weight: 400 !important;
-  color: var(--charcoal) !important;
-  width: 100% !important;
-  outline: none !important;
-  transition: all 0.2s ease-in-out !important;
-}
-.input-underline:focus {
-  border-color: rgba(16, 185, 129, 0.4) !important;
-  background: var(--input-bg) !important;
-}
-.input-underline::placeholder { color: var(--input-placeholder); }
-
+/* ═══════════════════════════════════════════════════════════════════
+   GLASSMORPHISM CONTAINERS
+   ═══════════════════════════════════════════════════════════════════ */
 .glass-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
-}
-
-.glass-surface {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-.glass-surface-soft {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  opacity: 0.85;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.glass-page {
-  background-color: var(--paper);
+  border-radius: 16px;
 }
 
 .glass-panel {
   background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-panel-heavy {
+  background: var(--glass-bg-heavy);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+}
+
+.glass-surface {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-surface-soft {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+/* Legacy compat */
+.cyber-border-container {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
 }
 
 .glass-panel-dark {
-  background: var(--paper-dark);
-  border: 1px solid var(--line);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   INPUTS — Cinematic Horizon Style
+   ═══════════════════════════════════════════════════════════════════ */
+.input-underline {
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: 8px !important;
+  padding: 11px 14px !important;
+  font-size: 13px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.02em !important;
+  color: var(--input-text) !important;
+  width: 100% !important;
+  outline: none !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.input-underline:focus {
+  border-color: var(--input-border-focus) !important;
+  background: var(--input-bg) !important;
+  box-shadow: 0 0 0 3px rgba(100, 149, 200, 0.10) !important;
+}
+.input-underline::placeholder { color: var(--input-placeholder) !important; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   NAVIGATION — Cinematic Floating Nav
+   ═══════════════════════════════════════════════════════════════════ */
+.nav-glass {
+  background: var(--nav-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--nav-border);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MISC UTILITIES
+   ═══════════════════════════════════════════════════════════════════ */
 .register-hero-panel {
-  background: var(--paper);
-  border-right: 1px solid var(--line);
+  background: var(--glass-bg);
+  border-right: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
 }
 
-.boho-glow {
-  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.01), transparent 70%);
+.glass-page {
+  background-color: transparent;
 }
 
-.boho-orb {
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.01) 0%, transparent 70%);
-  filter: blur(50px);
+/* Legacy orb & wash (neutral) */
+.boho-glow, .boho-orb, .boho-orb-soft, .coastal-wash, .coastal-orb {
+  background: transparent;
 }
 
-.boho-orb-soft {
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.01) 0%, transparent 70%);
-  filter: blur(60px);
+/* ═══════════════════════════════════════════════════════════════════
+   DEPTH UTILITIES
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Floating depth shadow for glassmorphic cards */
+.depth-sm {
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.12),
+    0 1px 2px rgba(0,0,0,0.08);
+}
+.depth-md {
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.18),
+    0 2px 8px rgba(0,0,0,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.depth-lg {
+  box-shadow:
+    0 24px 64px rgba(0,0,0,0.24),
+    0 8px 24px rgba(0,0,0,0.14),
+    0 2px 6px rgba(0,0,0,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.depth-panel {
+  box-shadow:
+    0 32px 80px rgba(0,0,0,0.28),
+    0 12px 32px rgba(0,0,0,0.16),
+    0 4px 10px rgba(0,0,0,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    inset 0 -1px 0 rgba(0,0,0,0.06);
 }
 
-.coastal-wash {
-  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.01), transparent 60%);
+/* ── Menu / Drawer Backdrop ── */
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 490;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px) brightness(1);
+  -webkit-backdrop-filter: blur(0px) brightness(1);
+  pointer-events: none;
+  transition:
+    background 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    backdrop-filter 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.menu-backdrop.open {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px) brightness(0.65);
+  -webkit-backdrop-filter: blur(10px) brightness(0.65);
+  pointer-events: auto;
 }
 
-.coastal-orb {
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.01) 0%, transparent 70%);
-  filter: blur(50px);
-}
+/* ═══════════════════════════════════════════════════════════════════
+   ANIMATIONS — Cinematic entrance system
+   ═══════════════════════════════════════════════════════════════════ */
 
-@keyframes rise {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* Base keyframes */
+@keyframes riseIn {
+  0%   { opacity: 0; transform: translateY(28px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
 }
-
-.animate-rise  { animation: rise 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.animate-fade  { animation: fadeIn 0.3s ease both; }
-
+@keyframes slideUpIn {
+  0%   { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleUpIn {
+  0%   { opacity: 0; transform: scale(0.94) translateY(10px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes shimmer {
+  0%   { opacity: 0.35; }
+  50%  { opacity: 0.9; }
+  100% { opacity: 0.35; }
+}
+@keyframes menuDrop {
+  0%   { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.99); }
+  from { opacity: 0; transform: scale(0.98); }
   to   { opacity: 1; transform: scale(1); }
 }
 
-.animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.animate-scale-in { animation: scaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both; }
+/* Hero entrance — staggered via CSS custom delays */
+.hero-rise {
+  animation: riseIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-fill-mode: both;
+}
+.hero-rise-1 { animation-delay: 0.05s; }
+.hero-rise-2 { animation-delay: 0.18s; }
+.hero-rise-3 { animation-delay: 0.30s; }
+.hero-rise-4 { animation-delay: 0.44s; }
+.hero-rise-5 { animation-delay: 0.58s; }
+.hero-rise-6 { animation-delay: 0.72s; }
 
+/* Panel slides from right */
+.panel-slide {
+  animation: scaleUpIn 1.0s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.25s;
+}
 
+/* Scroll-reveal: starts hidden, JS adds .revealed */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Nested children reveal automatically when parent gets .revealed */
+.scroll-reveal-child {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scroll-reveal.revealed .scroll-reveal-child {
+  opacity: 1;
+  transform: translateY(0);
+}
+.scroll-reveal-child.delay-1 { transition-delay: 0.10s; }
+.scroll-reveal-child.delay-2 { transition-delay: 0.20s; }
+.scroll-reveal-child.delay-3 { transition-delay: 0.30s; }
+.scroll-reveal-child.delay-4 { transition-delay: 0.40s; }
+.scroll-reveal-child.delay-5 { transition-delay: 0.50s; }
+
+/* Menu dropdown entrance */
+.animate-menu-drop { animation: menuDrop 0.28s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Legacy utility classes */
+.animate-rise      { animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-fade      { animation: fadeIn 0.5s ease both; }
+.animate-slide-up  { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-scale-in  { animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-shimmer   { animation: shimmer 3s ease-in-out infinite; }
