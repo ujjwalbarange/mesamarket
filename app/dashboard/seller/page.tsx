@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { TrendingUp, Package, Plus, Upload, CheckCircle, Eye, RefreshCw, Trash2 } from 'lucide-react'
+import { motion } from 'framer-motion'
 import Navbar from '@/components/layout/Navbar'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
@@ -120,59 +121,60 @@ export default function SellerDashboard() {
   )
 
   return (
-    <div className="min-h-screen bg-[var(--paper)]">
+    <div className="aurora-page min-h-screen">
       <Navbar />
       {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)}/>}
 
-      <div className="max-w-6xl mx-auto px-8 py-12 pt-24">
+      <div className="max-w-6xl mx-auto px-6 lg:px-12 pt-28 pb-20">
         {/* Header */}
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <p className="text-[9px] uppercase tracking-[4px] text-[var(--forest-light)] font-medium font-[Jost] mb-1">Seller Dashboard</p>
-            <h1 className="font-display text-4xl font-light text-[var(--charcoal)]">
-              Hello, <em>{user?.name || user?.email?.split('@')[0]}.</em>
+        <div className="flex items-end justify-between mb-14">
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16,1,0.3,1] }}>
+            <p className="text-[11px] uppercase tracking-[2.5px] text-[var(--muted)] font-semibold mb-2">Seller Workspace</p>
+            <h1 className="font-display text-display text-[var(--ink)]">
+              Hello, {user?.name || user?.email?.split('@')[0]}.
             </h1>
-          </div>
-          <div className="flex gap-4">
-            <button onClick={() => user && fetchAll(user.userId)} className="text-[10px] uppercase tracking-[2px] text-[var(--grey-light)] font-[Jost] mb-2 hover:text-[var(--forest)]">
+          </motion.div>
+          <div className="flex gap-3">
+            <button onClick={() => user && fetchAll(user.userId)} className="w-9 h-9 rounded-full border border-[var(--line-strong)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--ink)] transition-all">
               <RefreshCw size={14} className={dataLoading ? 'animate-spin' : ''}/>
             </button>
             <Link href="/dashboard/seller/create-gig">
-              <Button size="md"><Plus size={13}/> Create New Gig</Button>
+              <Button size="md"><Plus size={13}/> Create Gig</Button>
             </Link>
           </div>
         </div>
 
-        {/* Earnings + stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-[1px] bg-[var(--line)] border-[0.5px] border-[var(--line)] mb-10">
+        {/* Floating metrics — no boxes */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14 pb-14 border-b border-[var(--line)]">
           {[
-            { num: `₹${(totalEarnings * 0.9).toLocaleString()}`, label: 'Net Earnings', sub: 'After platform fee', icon: <TrendingUp size={14}/> },
-            { num: activeProjects.length, label: 'Active Projects', sub: 'In progress', icon: <Package size={14}/> },
-            { num: gigs.filter(g=>g.status==='PUBLISHED').length, label: 'Live Gigs', sub: 'Published', icon: <Eye size={14}/> },
-            { num: '0 ★', label: 'Average Rating', sub: `${gigs.reduce((s,g)=>s+(g.totalOrders||0),0)} total orders`, icon: <CheckCircle size={14}/> },
-          ].map(({ num, label, sub, icon }) => (
-            <div key={label} className="bg-[var(--paper)] p-6">
-              <div className="flex items-center gap-2 text-[var(--grey-light)] mb-2">
-                {icon}<span className="text-[9px] uppercase tracking-[2px] font-[Jost] font-medium">{label}</span>
+            { num: `₹${(totalEarnings * 0.9).toLocaleString()}`, label: 'Net Earnings', icon: <TrendingUp size={14}/> },
+            { num: activeProjects.length, label: 'Active Projects', icon: <Package size={14}/> },
+            { num: gigs.filter(g=>g.status==='PUBLISHED').length, label: 'Live Gigs', icon: <Eye size={14}/> },
+            { num: `${gigs.reduce((s,g)=>s+(g.rating??0),0) > 0 ? (gigs.reduce((s,g)=>s+(g.rating??0),0)/gigs.filter(g=>g.rating&&g.rating>0).length).toFixed(1) : '—'} ★`, label: 'Avg Rating', icon: <CheckCircle size={14}/> },
+          ].map((m, i) => (
+            <motion.div key={m.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16,1,0.3,1] }}>
+              <div className="font-display text-[42px] text-[var(--ink)] leading-none mb-2">{m.num}</div>
+              <div className="flex items-center gap-1.5 text-[11px] text-[var(--muted)] font-medium uppercase tracking-[1.5px]">
+                {m.icon} {m.label}
               </div>
-              <div className="font-display text-3xl font-light text-[var(--charcoal)]">{num}</div>
-              <div className="text-[10px] text-[var(--grey-light)] mt-1 font-[Jost]">{sub}</div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        {/* Tabs */}
-        <div className="flex border-b border-[var(--line)] mb-8">
+        {/* Pill tabs */}
+        <div className="flex gap-2 mb-8">
           {[
             { key: 'orders',  label: `Active Orders (${activeProjects.length})` },
-            { key: 'history', label: `History` },
+            { key: 'history', label: 'History' },
             { key: 'gigs',    label: `My Gigs (${gigs.length})` },
           ].map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key as 'orders' | 'gigs' | 'history')}
-              className={`px-6 py-3 text-[11px] uppercase tracking-[2px] font-medium font-[Jost] border-b-2 transition-colors
-                ${activeTab===tab.key ? 'border-[var(--forest)] text-[var(--forest)]' : 'border-transparent text-[var(--grey-light)] hover:text-[var(--grey)]'}`}>
-              {tab.label}
-            </button>
+              className={`px-5 py-2.5 rounded-full text-[12px] font-semibold transition-all ${
+                activeTab === tab.key
+                  ? 'bg-[var(--ink)] text-white shadow-[0_2px_12px_rgba(15,23,42,0.20)]'
+                  : 'bg-transparent text-[var(--muted)] border border-[var(--line-strong)] hover:border-[var(--ink)] hover:text-[var(--ink)]'
+              }`}
+            >{tab.label}</button>
           ))}
         </div>
 
@@ -185,12 +187,14 @@ export default function SellerDashboard() {
             {activeTab === 'orders' && (
               <div className="space-y-4 animate-slide-up">
                 {activeProjects.length === 0 ? (
-                  <div className="text-center py-20 border-[0.5px] border-dashed border-[var(--line)]">
-                    <p className="font-[Jost] text-[13px] text-[var(--grey-light)]">No active orders yet. Gigs go live after admin approval.</p>
+                  <div className="bento-card flex flex-col items-center py-24 text-center">
+                    <div className="font-display text-[64px] text-[var(--line-strong)] leading-none mb-4 select-none">∅</div>
+                    <p className="font-display-medium text-[18px] text-[var(--muted)]">No active orders yet.</p>
+                    <p className="text-[13px] text-[var(--muted-light)] mt-2 font-light">Gigs go live after admin approval.</p>
                   </div>
                 ) : activeProjects.map(order => (
-                  <div key={order.id} className="border-[0.5px] border-[var(--line)] bg-[var(--paper)] hover:border-[var(--forest)]/30 transition-colors">
-                    <div className="h-[2px] bg-[var(--teal)]"/>
+                  <div key={order.id} className="bento-card overflow-hidden hover:-translate-y-0.5 transition-all">
+                    <div className="h-[3px] bg-blue-400"/>
                     <div className="p-6">
                       <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
                         <div>
@@ -276,14 +280,15 @@ export default function SellerDashboard() {
             {activeTab === 'gigs' && (
               <div className="space-y-4 animate-slide-up">
                 {gigs.length === 0 ? (
-                   <div className="text-center py-20 border-[0.5px] border-dashed border-[var(--line)]">
-                    <p className="font-[Jost] text-[13px] text-[var(--grey-light)]">You haven't created any gigs yet.</p>
+                   <div className="bento-card flex flex-col items-center py-24 text-center">
+                    <div className="font-display text-[64px] text-[var(--line-strong)] leading-none mb-4 select-none">∅</div>
+                    <p className="font-display-medium text-[18px] text-[var(--muted)]">No gigs created yet.</p>
                   </div>
                 ) : gigs.map(gig => {
                   const badge = GIG_STATUS_BADGE[gig.status]
                   return (
-                    <div key={gig.id} className="border-[0.5px] border-[var(--line)] bg-[var(--paper)] hover:border-[var(--forest)]/30 transition-colors p-5 flex items-center gap-5">
-                      <div className="w-16 h-16 bg-[var(--paper-dark)] flex items-center justify-center shrink-0">
+                    <div key={gig.id} className="bento-card hover:-translate-y-0.5 transition-all p-5 flex items-center gap-5">
+                      <div className="w-14 h-14 bg-[var(--bg-secondary)] rounded-2xl flex items-center justify-center shrink-0">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="opacity-20"><path d="M12 2L22 7v10L12 22 2 17V7z" stroke="#1B3D2F" strokeWidth="1"/></svg>
                       </div>
                       <div className="flex-1 min-w-0">

@@ -1,44 +1,55 @@
 'use client'
-import { ButtonHTMLAttributes, ReactNode } from 'react'
 import { Loader2 } from 'lucide-react'
+import React from 'react'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'outline' | 'ghost' | 'danger'
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'glass' | 'danger'
   size?: 'sm' | 'md' | 'lg'
   loading?: boolean
-  children: ReactNode
+  children: React.ReactNode
 }
 
-const variants = {
-  primary: 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold border-transparent shadow-[0_4px_20px_rgba(16,185,129,0.25)] transition-all duration-300',
-  outline: 'bg-[var(--glass-bg)] border-[var(--glass-border)] text-[var(--grey)] hover:bg-[var(--surface-hover)] hover:border-[var(--line-hover)] hover:text-[var(--charcoal)] backdrop-blur-sm transition-all duration-300',
-  ghost:   'bg-transparent text-[var(--grey)] border-transparent hover:text-[var(--charcoal)] hover:bg-[var(--glass-bg)] transition-all duration-200',
-  danger:  'bg-red-500/10 border-red-950/20 text-red-500 hover:bg-red-900/20 hover:text-red-400 transition-all duration-300',
+const variantStyles: Record<string, string> = {
+  primary:   'bg-[var(--ink)] text-white border-transparent shadow-[0_2px_12px_rgba(15,23,42,0.22)] hover:bg-[var(--ink-soft)] hover:shadow-[0_8px_24px_rgba(15,23,42,0.28)]',
+  secondary: 'bg-[var(--royal-blue)] text-white border-transparent shadow-[0_2px_12px_rgba(37,99,235,0.30)] hover:bg-[var(--accent-hover)] hover:shadow-[0_8px_28px_rgba(37,99,235,0.40)]',
+  outline:   'bg-transparent text-[var(--ink)] border-[var(--line-strong)] hover:bg-[var(--bg-secondary)] hover:border-[var(--ink)]',
+  ghost:     'bg-transparent text-[var(--muted)] border-transparent hover:bg-[var(--royal-blue-dim)] hover:text-[var(--royal-blue)]',
+  glass:     'bg-[var(--glass)] text-[var(--ink)] border-[var(--glass-border)] backdrop-blur-md shadow-[var(--shadow-sm)] hover:bg-[var(--glass-heavy)]',
+  danger:    'bg-red-600 text-white border-transparent shadow-[0_2px_12px_rgba(220,38,38,0.25)] hover:bg-red-700 hover:shadow-[0_8px_24px_rgba(220,38,38,0.35)]',
 }
-const sizes = {
-  sm: 'px-3 py-1.5 text-[9px] tracking-[1.5px] rounded-md',
-  md: 'px-5 py-2.5 text-[10px] tracking-[2px] rounded-lg',
-  lg: 'px-6 py-3 text-[11px] tracking-[2px] rounded-lg',
+
+const sizeStyles: Record<string, string> = {
+  sm: 'px-4 py-2 text-[12px] gap-1.5',
+  md: 'px-5 py-2.5 text-[13px] gap-2',
+  lg: 'px-7 py-3.5 text-[14px] gap-2',
 }
 
 export default function Button({
-  variant = 'primary', size = 'md', loading, children, className = '', disabled, ...props
+  variant = 'primary',
+  size = 'md',
+  loading = false,
+  disabled,
+  className = '',
+  children,
+  ...props
 }: ButtonProps) {
   return (
     <button
-      {...props}
       disabled={disabled || loading}
-      className={`
-        inline-flex items-center justify-center gap-2
-        border uppercase font-medium font-mono-co
-        cursor-pointer active:scale-[0.97]
-        disabled:opacity-50 disabled:cursor-not-allowed
-        ${variants[variant]} ${sizes[size]} ${className}
-      `}
+      className={[
+        /* Base pill shape */
+        'inline-flex items-center justify-center rounded-full border font-medium transition-all duration-200',
+        'hover:-translate-y-px active:translate-y-0 active:scale-[0.98]',
+        'disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--royal-blue)] focus-visible:ring-offset-2',
+        variantStyles[variant],
+        sizeStyles[size],
+        className,
+      ].join(' ')}
+      {...props}
     >
-      {loading && <Loader2 size={11} className="animate-spin text-current" />}
-      {!loading && children}
-      {loading && <span className="opacity-75">{children}</span>}
+      {loading ? <Loader2 size={size === 'lg' ? 15 : 13} className="animate-spin shrink-0" /> : null}
+      {children}
     </button>
   )
 }

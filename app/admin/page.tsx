@@ -135,55 +135,57 @@ export default function AdminPanel() {
 
   const Spinner = () => (
     <div className="text-center py-16">
-      <RefreshCw size={24} className="mx-auto mb-3 text-[var(--grey-light)] animate-spin"/>
-      <p className="text-[12px] text-[var(--grey-light)] font-[Jost]">Loading…</p>
+      <RefreshCw size={24} className="mx-auto mb-3 text-white/30 animate-spin"/>
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-[var(--paper)]">
+    <div className="section-dark min-h-screen">
       <Navbar/>
       {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)}/>}
 
-      <div className="max-w-7xl mx-auto px-8 py-12 pt-24">
+      <div className="max-w-7xl mx-auto px-6 lg:px-16 pt-28 pb-20">
         {/* Header */}
-        <div className="flex items-start justify-between mb-10">
+        <div className="flex items-start justify-between mb-14">
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <Shield size={18} className="text-[var(--forest)]"/>
-              <p className="text-[9px] uppercase tracking-[4px] text-[var(--forest-light)] font-medium font-[Jost]">Admin Panel</p>
+            <div className="flex items-center gap-2.5 mb-3">
+              <Shield size={14} className="text-blue-400"/>
+              <p className="text-[11px] uppercase tracking-[2.5px] text-blue-400 font-semibold">Admin Control</p>
             </div>
-            <h1 className="font-display text-4xl font-light text-[var(--charcoal)]">Platform <em>Control Centre</em></h1>
+            <h1 className="font-display text-display text-white">Platform Centre.</h1>
           </div>
           <button onClick={fetchAll} disabled={loading}
-            className="flex items-center gap-2 text-[10px] uppercase tracking-[2px] text-[var(--grey)] hover:text-[var(--forest)] transition-colors font-[Jost] font-medium mt-2">
+            className="flex items-center gap-2 text-[12px] font-medium text-white/50 hover:text-white transition-colors mt-2 px-4 py-2 rounded-full border border-white/10 hover:border-white/20">
             <RefreshCw size={13} className={loading ? 'animate-spin' : ''}/>{loading ? 'Loading…' : 'Refresh'}
           </button>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-[1px] bg-[var(--line)] border-[0.5px] border-[var(--line)] mb-10">
+        {/* Floating metrics */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14 pb-14 border-b border-white/10">
           {[
-            { num: loading ? '…' : payments.length, label: 'Pending Payments',     icon: <Clock      size={14} className="text-[#d4870a]"       /> },
-            { num: loading ? '…' : gigs.length,     label: 'Gigs Awaiting Review', icon: <Eye        size={14} className="text-[var(--teal)]"    /> },
-            { num: loading ? '…' : orders.length,   label: 'Total Orders',         icon: <Package    size={14} className="text-[var(--forest)]"  /> },
-            { num: loading ? '…' : users.length,    label: 'Registered Users',     icon: <TrendingUp size={14} className="text-[var(--forest)]"  /> },
+            { num: loading ? '…' : payments.length, label: 'Pending Payments',     icon: <Clock      size={14}/> },
+            { num: loading ? '…' : gigs.length,     label: 'Awaiting Review',      icon: <Eye        size={14}/> },
+            { num: loading ? '…' : orders.length,   label: 'Total Orders',         icon: <Package    size={14}/> },
+            { num: loading ? '…' : users.length,    label: 'Registered Users',     icon: <TrendingUp size={14}/> },
           ].map(({ num, label, icon }) => (
-            <div key={label} className="bg-[var(--paper)] p-6">
-              <div className="flex items-center gap-2 mb-2 text-[var(--grey-light)]">{icon}<span className="text-[9px] uppercase tracking-[2px] font-[Jost] font-medium">{label}</span></div>
-              <div className="font-display text-3xl font-light text-[var(--charcoal)]">{num}</div>
+            <div key={label}>
+              <div className="font-display text-[48px] text-white leading-none mb-2">{num}</div>
+              <div className="flex items-center gap-1.5 text-[11px] text-white/40 font-medium uppercase tracking-[1.5px]">{icon} {label}</div>
             </div>
           ))}
         </div>
 
-        {/* Tabs */}
-        <div className="flex border-b border-[var(--line)] mb-8 overflow-x-auto">
+        {/* Pill tabs */}
+        <div className="flex flex-wrap gap-2 mb-8">
           {TABS.map(t => (
             <button key={t.key} onClick={() => setTab(t.key)}
-              className={`flex items-center gap-2 px-6 py-3 text-[11px] uppercase tracking-[2px] font-medium font-[Jost] border-b-2 whitespace-nowrap transition-colors
-                ${tab===t.key ? 'border-[var(--forest)] text-[var(--forest)]' : 'border-transparent text-[var(--grey-light)] hover:text-[var(--grey)]'}`}>
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-[12px] font-semibold transition-all whitespace-nowrap ${
+                tab===t.key
+                  ? 'bg-white text-[var(--ink)] shadow-[0_2px_12px_rgba(255,255,255,0.15)]'
+                  : 'text-white/60 border border-white/15 hover:border-white/30 hover:text-white'
+              }`}>
               {t.label}
-              {t.badge !== undefined && t.badge > 0 && <span className="bg-[#d4870a] text-white text-[9px] px-1.5 py-0.5 font-medium">{t.badge}</span>}
+              {t.badge !== undefined && t.badge > 0 && <span className="bg-amber-400 text-slate-900 text-[9px] px-1.5 py-0.5 rounded-full font-bold">{t.badge}</span>}
             </button>
           ))}
         </div>
@@ -192,54 +194,43 @@ export default function AdminPanel() {
         {tab === 'gigs' && (
           <div className="space-y-4">
             {loading ? <Spinner/> : gigs.length === 0 ? (
-              <div className="text-center py-16">
-                <CheckCircle size={28} className="mx-auto mb-3 text-[var(--forest)]"/>
-                <p className="font-display text-xl font-light text-[var(--grey)]">No gigs pending review</p>
+              <div className="bento-card" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}>
+                <div className="flex flex-col items-center py-24 text-center">
+                  <CheckCircle size={32} className="mb-4 text-emerald-400"/>
+                  <p className="font-display-medium text-[18px] text-white">All gigs reviewed.</p>
+                </div>
               </div>
             ) : gigs.map(g => (
-              <div key={g.id} className="border-[0.5px] border-[var(--line)] bg-[var(--paper)]">
-                <div className="h-[2px] bg-[var(--teal)]"/>
+              <div key={g.id} className="overflow-hidden rounded-2xl" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}>
+                <div className="h-[3px] bg-blue-400"/>
                 <div className="p-6">
                   <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-2">
-                        <div className="w-2 h-2 rounded-full bg-[var(--teal)] animate-pulse"/>
-                        <span className="text-[9px] uppercase tracking-[2px] text-[var(--teal)] font-medium font-[Jost]">Pending Review</span>
-                        <Badge variant="grey" size="sm">{g.category}</Badge>
+                        <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"/>
+                        <span className="text-[10px] uppercase tracking-[2px] text-blue-400 font-semibold">Pending Review</span>
+                        <Badge variant="muted" size="sm">{g.category}</Badge>
                       </div>
-                      <h3 className="text-[15px] font-medium text-[var(--charcoal)] font-[Jost] mb-1">{g.title}</h3>
-                      <p className="text-[12px] text-[var(--grey)] font-[Jost] font-light">
-                        by <span className="font-medium">{g.seller.name}</span>
-                        <span className="text-[var(--grey-light)]"> · {g.seller.email}</span>
-                        {g.seller.sellerBio && <span className="text-[var(--grey-light)]"> · {g.seller.sellerBio.slice(0,50)}…</span>}
+                      <h3 className="font-display-medium text-[16px] text-white mb-1">{g.title}</h3>
+                      <p className="text-[12px] text-white/50 font-light">
+                        by <span className="text-white/80 font-medium">{g.seller.name}</span>
+                        <span className="text-white/30"> · {g.seller.email}</span>
                       </p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="font-display text-xl font-light text-[var(--forest)]">From ₹{g.basicPrice.toLocaleString()}</p>
-                      <p className="text-[10px] text-[var(--grey-light)] mt-1 font-[Jost]">{new Date(g.createdAt).toLocaleDateString('en-IN')}</p>
+                      <p className="font-display text-[24px] text-white leading-none">₹{g.basicPrice.toLocaleString()}</p>
+                      <p className="text-[11px] text-white/40 mt-1">{new Date(g.createdAt).toLocaleDateString('en-IN')}</p>
                     </div>
                   </div>
-                  {/* Pricing row */}
-                  <div className="grid grid-cols-3 gap-3 mb-4">
-                    {[['Basic', g.basicPrice],['Standard', g.standardPrice],['Premium', g.premiumPrice]].map(([l, p]) => (
-                      <div key={l as string} className="bg-[var(--paper-dark)] p-3 border-[0.5px] border-[var(--line)]">
-                        <p className="text-[9px] uppercase tracking-[1.5px] text-[var(--grey-light)] font-[Jost] font-medium mb-1">{l}</p>
-                        <p className="font-display text-lg font-light text-[var(--charcoal)]">₹{(p as number).toLocaleString()}</p>
-                      </div>
-                    ))}
-                  </div>
-                  {/* Tech stack */}
                   <div className="flex flex-wrap gap-1.5 mb-4">
-                    {g.techStack.split(',').map(t => (
-                      <span key={t} className="text-[9px] uppercase tracking-[1px] text-[var(--grey)] border-[0.5px] border-[var(--line)] px-2 py-0.5 font-mono-co">{t.trim()}</span>
-                    ))}
-                    <span className="text-[9px] text-[var(--grey-light)] font-[Jost] ml-1">{g.deliveryDays}d delivery</span>
+                    {g.techStack.split(',').map(t => <span key={t} className="pill-badge" style={{ background: 'rgba(37,99,235,0.15)', color: '#93C5FD', border: '1px solid rgba(37,99,235,0.25)' }}>{t.trim()}</span>)}
+                    <span className="text-[11px] text-white/30 ml-1">{g.deliveryDays}d delivery</span>
                   </div>
-                  <div className="flex gap-3 pt-4 border-t border-[var(--line)]">
-                    <Button size="sm" loading={actionLoading===g.id} onClick={() => handleGig(g.id,'approve')}><CheckCircle size={12}/> Approve & Publish</Button>
+                  <div className="flex gap-3 pt-4 border-t border-white/10">
+                    <Button size="sm" loading={actionLoading===g.id} onClick={() => handleGig(g.id,'approve')}><CheckCircle size={12}/> Approve</Button>
                     <Button variant="danger" size="sm" loading={actionLoading===g.id} onClick={() => handleGig(g.id,'reject')}><XCircle size={12}/> Reject</Button>
-                    <button onClick={() => setGigPreview(g)} className="text-[10px] uppercase tracking-[2px] text-[var(--grey)] hover:text-[var(--forest)] flex items-center gap-1.5 font-medium font-[Jost] transition-colors">
-                      <Eye size={12}/> Full Description
+                    <button onClick={() => setGigPreview(g)} className="text-[12px] text-white/50 hover:text-white flex items-center gap-1.5 transition-colors">
+                      <Eye size={12}/> Details
                     </button>
                   </div>
                 </div>
@@ -388,10 +379,10 @@ export default function AdminPanel() {
 
       {/* Payment screenshot modal */}
       <Modal isOpen={!!preview} onClose={() => setPreview(null)} title="Payment Screenshot" size="md">
-        <div className="aspect-video bg-[var(--paper-dark)] flex items-center justify-center border-[0.5px] border-[var(--line)] mb-4 overflow-hidden">
+        <div className="aspect-video bg-[var(--bg-secondary)] flex items-center justify-center rounded-2xl mb-4 overflow-hidden border border-[var(--line)]">
           {preview?.screenshot
             ? <img src={preview.screenshot} alt="Payment proof" className="max-w-full max-h-full object-contain"/>
-            : <p className="text-[12px] text-[var(--grey-light)] font-[Jost]">No screenshot uploaded</p>}
+            : <p className="text-[13px] text-[var(--muted)]">No screenshot uploaded</p>}
         </div>
         <div className="flex gap-3">
           <Button size="md" className="flex-1" loading={actionLoading===preview?.id} onClick={() => preview && handlePayment(preview.id,'approve')}><CheckCircle size={13}/> Verify Payment</Button>

@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { CheckCircle, Code2, Server } from 'lucide-react'
+import { CheckCircle, Compass, Server, ArrowRight, ArrowLeft } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Toast from '@/components/ui/Toast'
 
@@ -21,15 +21,15 @@ type FormErrors = { name?: string; email?: string; password?: string; confirm?: 
 const INIT: Form = { name:'', email:'', password:'', confirm:'', bio:'', skills:'', isSeller:false, paymentQr: null }
 
 const getPasswordStrength = (pw: string) => {
-  if (!pw) return { score: 0, label: 'EMPTY', color: 'bg-white/20' }
+  if (!pw) return { score: 0, label: 'EMPTY', color: 'bg-[var(--line-strong)]' }
   let score = 0
   if (pw.length >= 8) score++
   if (/[A-Z]/.test(pw)) score++
   if (/[0-9]/.test(pw)) score++
   if (/[^A-Za-z0-9]/.test(pw)) score++
-  if (score <= 1) return { score: 1, label: 'WEAK', color: 'bg-red-500/60' }
-  if (score <= 3) return { score: 2, label: 'MEDIUM', color: 'bg-amber-500/60' }
-  return { score: 3, label: 'STRONG', color: 'bg-emerald-500/60' }
+  if (score <= 1) return { score: 1, label: 'WEAK', color: 'bg-red-400' }
+  if (score <= 3) return { score: 2, label: 'MEDIUM', color: 'bg-amber-400' }
+  return { score: 3, label: 'STRONG', color: 'bg-emerald-400' }
 }
 
 export default function RegisterPage() {
@@ -61,306 +61,226 @@ export default function RegisterPage() {
     if (!validate()) return
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: form.email.trim().toLowerCase() }),
+      const res = await fetch('/api/auth/register', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email.trim().toLowerCase(), action: 'send_otp' }),
       })
       const data = await res.json()
-      if (!res.ok) {
-        setToast({ msg: data.error ?? 'Failed to send OTP', type: 'error' })
-        setLoading(false)
-        return
-      }
-      setToast({ msg: 'Verification code sent to your email.', type: 'success' })
+      if (!res.ok) { setToast({ msg: data.error ?? 'Failed to send OTP', type: 'error' }); setLoading(false); return }
+      setToast({ msg: 'Verification code sent to email', type: 'success' })
       setStep('otp')
-    } catch {
-      setToast({ msg: 'Network error. Please try again.', type: 'error' })
-    } finally {
-      setLoading(false)
-    }
+    } catch { setToast({ msg: 'Network error', type: 'error' }) }
+    finally { setLoading(false) }
   }
 
   const handleSubmitFinal = async (ev: React.FormEvent) => {
     ev.preventDefault()
-    if (otp.length !== 6) {
-      setToast({ msg: 'Please enter the 6-digit code', type: 'error' })
-      return
-    }
+    if (otp.length !== 6) return setToast({ msg: 'Enter 6-digit code', type: 'error' })
     setLoading(true)
     try {
-      let qrBase64 = null
-      if (form.isSeller && form.paymentQr) {
-        qrBase64 = await toBase64(form.paymentQr)
-      }
+      const qrBase64 = form.paymentQr ? await toBase64(form.paymentQr) : undefined
       const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: form.name.trim(),
-          email: form.email.trim().toLowerCase(),
-          password: form.password,
-          isSeller: form.isSeller,
-          bio: form.bio || undefined,
-          skills: form.skills || undefined,
-          paymentQr: qrBase64 || undefined,
-          otp: otp,
-        })
+          action: 'verify_register', otp,
+          email: form.email.trim().toLowerCase(), password: form.password, name: form.name,
+          role: form.isSeller ? 'SELLER' : 'BUYER',
+          sellerBio: form.bio, sellerSkills: form.skills, paymentQrBase64: qrBase64
+        }),
       })
       const data = await res.json()
-      if (res.ok) {
-        setToast({ msg: 'Registration successful! Redirecting...', type: 'success' })
-        setTimeout(() => window.location.href = '/auth/login', 1500)
-      } else {
-        setToast({ msg: data.error || 'Registration failed.', type: 'error' })
-      }
-    } catch {
-      setToast({ msg: 'Network error occurred.', type: 'error' })
-    } finally {
-      setLoading(false)
-    }
+      if (!res.ok) { setToast({ msg: data.error ?? 'Registration failed', type: 'error' }); setLoading(false); return }
+      window.location.href = form.isSeller ? '/dashboard/seller' : '/dashboard/buyer'
+    } catch { setToast({ msg: 'Network error', type: 'error' }) }
+    finally { setLoading(false) }
   }
 
   const pwStrength = getPasswordStrength(form.password)
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden font-sans">
-      {/* ── Fixed cinematic horizon background ─────────────────── */}
-      <div className="horizon-canvas" aria-hidden="true" />
-      <div className="horizon-overlay" aria-hidden="true" />
-
+    <div className="min-h-screen aurora-page overflow-hidden flex">
       {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
 
-      {/* ── Top logo — always visible ───────────────────────────── */}
-      <div className="relative z-20 flex justify-center pt-8">
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="h-9 w-9 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-sm flex items-center justify-center transition-all group-hover:border-[var(--line-hover)]">
-            <Code2 size={17} className="text-[var(--grey)] group-hover:text-[var(--charcoal)] transition-colors" />
+      {/* ── Left panel — cinematic editorial ── */}
+      <div className="hidden lg:flex flex-col flex-1 relative overflow-hidden bg-[var(--ink)] p-14">
+        <div className="absolute inset-0">
+          <div className="aurora-orb-blue w-[500px] h-[500px] top-[-20%] right-[-20%] opacity-40" style={{ position: 'absolute' }} />
+          <div className="aurora-orb-cyan w-[400px] h-[400px] bottom-[-20%] left-[-10%] opacity-30" style={{ position: 'absolute' }} />
+        </div>
+
+        <Link href="/" className="relative z-10 flex items-center gap-2.5 w-fit">
+          <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
+            <Compass size={16} className="text-white" />
           </div>
-          <span className="font-mono-co text-[12px] tracking-[4px] uppercase text-[var(--charcoal)] font-medium">
-            C-OASIS
-          </span>
+          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-white">C-Oasis</span>
         </Link>
+
+        <div className="relative z-10 mt-auto max-w-md">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>
+            <h1 className="font-display text-[64px] leading-[0.95] text-white mb-6">
+              Build your<br />future.
+            </h1>
+            <p className="text-[16px] text-white/60 leading-relaxed font-light mb-10">
+              Join the marketplace where vetted engineers and forward-thinking brands connect to build incredible software.
+            </p>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="p-5 rounded-2xl bg-white/8 border border-white/12 backdrop-blur-sm">
+            <p className="text-[14px] text-white/80 font-light leading-relaxed mb-3">
+              "Being a seller on C-Oasis helped me pay my tuition while building real-world products for actual companies."
+            </p>
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center text-[11px] font-semibold text-white">S</div>
+              <div>
+                <div className="text-[12px] font-medium text-white">Sanya K.</div>
+                <div className="text-[10px] text-white/50">Pro Seller · CS Senior</div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
 
-      {/* ── Auth card centered below logo ───────────────────────── */}
-      <div className="relative z-20 flex flex-col items-center justify-start px-4 py-8">
-        <div className="w-full max-w-[400px]">
+      {/* ── Right panel — form ── */}
+      <div className="flex flex-col items-center flex-1 lg:max-w-[540px] px-6 py-12 overflow-y-auto">
+        <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-10 w-full">
+          <div className="w-8 h-8 rounded-xl bg-[var(--ink)] flex items-center justify-center">
+            <Compass size={15} className="text-white" />
+          </div>
+          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-[var(--ink)]">C-Oasis</span>
+        </Link>
 
-          {/* Card */}
-          <div className="glass-panel-heavy p-8 md:p-10 rounded-2xl w-full">
-
-            {/* Heading */}
-            <div className="mb-7">
-              <h1 className="font-display text-[30px] text-[var(--charcoal)] leading-tight tracking-wide mb-1">
-                Create account
-              </h1>
-              <p className="text-[11px] text-[var(--grey)] font-light tracking-wide">
-                Already verified?{' '}
-                <Link href="/auth/login" className="text-[var(--charcoal)] font-medium underline font-mono-co hover:text-emerald-400 transition-colors">
-                  Sign in →
-                </Link>
+        <div className="w-full max-w-[400px] my-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
+            <div className="mb-8">
+              <h2 className="font-display text-[36px] text-[var(--ink)] leading-tight mb-2">Create account</h2>
+              <p className="text-[14px] text-[var(--muted)] font-light">
+                Already verified? <Link href="/auth/login" className="text-[var(--ink)] font-semibold hover:text-[var(--royal-blue)] transition-colors">Sign in →</Link>
               </p>
             </div>
 
-            {/* Google SSO */}
-            <a
-              href="/api/auth/google"
-              className="w-full h-11 flex items-center justify-center gap-3 px-4 bg-[var(--sso-bg)] border border-[var(--sso-border)] hover:bg-[var(--sso-hover-bg)] rounded-lg text-[11px] font-mono-co text-[var(--sso-text)] transition-all duration-300 mb-5 tracking-wider backdrop-blur-sm"
-            >
-              <svg className="w-4 h-4 shrink-0" viewBox="0 0 18 18" fill="none">
-                <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
-                <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.26c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
-                <path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
-                <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
-              </svg>
-              Register with Google
-            </a>
-
-            {/* Divider */}
-            <div className="flex items-center gap-3 mb-5">
-              <div className="flex-1 h-px bg-[var(--glass-border)]"/>
-              <span className="text-[9px] uppercase tracking-[2px] text-[var(--grey)] font-mono-co">or with email</span>
-              <div className="flex-1 h-px bg-[var(--glass-border)]"/>
-            </div>
-
-            {/* Buyer / Seller toggle */}
-            <div className="flex h-10 p-0.5 bg-[var(--capsule-bg)] border border-[var(--glass-border)] rounded-lg mb-6 backdrop-blur-sm">
-              {([false, true] as const).map(s => (
-                <button
-                  key={String(s)}
-                  type="button"
-                  onClick={() => setField('isSeller', s)}
-                  className={`flex-1 h-full rounded-md text-[9px] uppercase tracking-[2px] font-mono-co transition-all duration-200 ${
-                    form.isSeller === s
-                      ? (s ? 'bg-emerald-500 text-slate-950 font-semibold' : 'bg-[var(--glass-bg-heavy)] text-[var(--charcoal)] border border-[var(--glass-border)]')
-                      : 'text-[var(--grey)]'
-                  }`}
-                >
-                  {s ? 'Seller' : 'Buyer'}
-                </button>
-              ))}
-            </div>
-
             {step === 'form' ? (
-              <form onSubmit={handleSendOtp} className="space-y-4 animate-fade" noValidate>
-                {/* Full Name */}
-                <div>
-                  <label className="block text-[9px] uppercase tracking-[2.5px] text-[var(--grey)] mb-2 font-mono-co">Full Name</label>
-                  <input required className="input-underline" placeholder="e.g. Priyanshu Sharma"
-                    value={form.name} onChange={e => setField('name', e.target.value)} />
-                  <AnimatePresence>
-                    {errors.name && (
-                      <motion.p initial={{ opacity:0, height:0 }} animate={{ opacity:1, height:'auto' }} exit={{ opacity:0, height:0 }}
-                        className="text-[10px] text-red-400 mt-1.5 font-mono-co overflow-hidden">
-                        {errors.name}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
+              <>
+                <a href="/api/auth/google" className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-full border border-[var(--line-strong)] bg-[var(--surface)] hover:bg-[var(--bg-secondary)] text-[13px] font-medium text-[var(--ink)] transition-all hover:-translate-y-px shadow-[var(--shadow-xs)] mb-6">
+                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 18 18" fill="none"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.26c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+                  Register with Google
+                </a>
+
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="flex-1 h-px bg-[var(--line)]" />
+                  <span className="text-[11px] text-[var(--muted-light)] font-medium">or</span>
+                  <div className="flex-1 h-px bg-[var(--line)]" />
                 </div>
 
-                {/* Email */}
-                <div>
-                  <label className="block text-[9px] uppercase tracking-[2.5px] text-[var(--grey)] mb-2 font-mono-co">University Email</label>
-                  <input type="email" required className="input-underline" placeholder="you@university.edu"
-                    value={form.email} onChange={e => setField('email', e.target.value)} />
-                  <AnimatePresence>
-                    {errors.email && (
-                      <motion.p initial={{ opacity:0, height:0 }} animate={{ opacity:1, height:'auto' }} exit={{ opacity:0, height:0 }}
-                        className="text-[10px] text-red-400 mt-1.5 font-mono-co overflow-hidden">
-                        {errors.email}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
+                <div className="flex p-1 bg-[var(--bg-secondary)] rounded-full mb-6 border border-[var(--line)]">
+                  {([false, true] as const).map(s => (
+                    <button key={String(s)} type="button" onClick={() => setField('isSeller', s)}
+                      className={`flex-1 py-2 rounded-full text-[12px] font-semibold transition-all ${
+                        form.isSeller === s ? 'bg-[var(--surface)] text-[var(--ink)] shadow-[var(--shadow-sm)]' : 'text-[var(--muted)] hover:text-[var(--ink)]'
+                      }`}>
+                      {s ? 'Seller Account' : 'Buyer Account'}
+                    </button>
+                  ))}
                 </div>
 
-                {/* Password */}
-                <div>
-                  <label className="block text-[9px] uppercase tracking-[2.5px] text-[var(--grey)] mb-2 font-mono-co">Password</label>
-                  <input type="password" required className="input-underline" placeholder="••••••••••••"
-                    value={form.password} onChange={e => setField('password', e.target.value)} />
-                  {form.password && (
-                    <div className="mt-2 space-y-1 animate-scale-in">
-                      <div className="flex justify-between text-[9px] font-mono-co text-[var(--grey-light)]">
-                        <span>Strength</span>
-                        <span className={pwStrength.score === 3 ? 'text-emerald-400' : pwStrength.score === 2 ? 'text-amber-400' : 'text-red-400'}>
-                          {pwStrength.label}
-                        </span>
+                <form onSubmit={handleSendOtp} className="space-y-4" noValidate>
+                  <div>
+                    <label className="block text-[11px] uppercase tracking-[2px] text-[var(--muted)] font-semibold mb-2">Full Name</label>
+                    <input required className="input-field" placeholder="e.g. Priyanshu Sharma" value={form.name} onChange={e => setField('name', e.target.value)} />
+                    {errors.name && <p className="text-[11px] text-red-500 mt-1.5">{errors.name}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] uppercase tracking-[2px] text-[var(--muted)] font-semibold mb-2">Email</label>
+                    <input type="email" required className="input-field" placeholder="you@university.edu" value={form.email} onChange={e => setField('email', e.target.value)} />
+                    {errors.email && <p className="text-[11px] text-red-500 mt-1.5">{errors.email}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] uppercase tracking-[2px] text-[var(--muted)] font-semibold mb-2">Password</label>
+                    <input type="password" required className="input-field" placeholder="••••••••••••" value={form.password} onChange={e => setField('password', e.target.value)} />
+                    {form.password && (
+                      <div className="mt-2.5">
+                        <div className="flex justify-between text-[10px] font-medium mb-1">
+                          <span className="text-[var(--muted-light)]">Strength</span>
+                          <span className={pwStrength.score === 3 ? 'text-emerald-500' : pwStrength.score === 2 ? 'text-amber-500' : 'text-red-500'}>{pwStrength.label}</span>
+                        </div>
+                        <div className="flex gap-1 h-1">
+                          <div className={`flex-1 rounded-full transition-colors ${pwStrength.score >= 1 ? pwStrength.color : 'bg-[var(--line-strong)]'}`} />
+                          <div className={`flex-1 rounded-full transition-colors ${pwStrength.score >= 2 ? pwStrength.color : 'bg-[var(--line-strong)]'}`} />
+                          <div className={`flex-1 rounded-full transition-colors ${pwStrength.score >= 3 ? pwStrength.color : 'bg-[var(--line-strong)]'}`} />
+                        </div>
                       </div>
-                      <div className="flex gap-1.5 h-0.5">
-                        <div className={`flex-1 rounded-full h-full transition-colors ${pwStrength.score >= 1 ? pwStrength.color : 'bg-white/10'}`} />
-                        <div className={`flex-1 rounded-full h-full transition-colors ${pwStrength.score >= 2 ? pwStrength.color : 'bg-white/10'}`} />
-                        <div className={`flex-1 rounded-full h-full transition-colors ${pwStrength.score >= 3 ? pwStrength.color : 'bg-white/10'}`} />
+                    )}
+                    {errors.password && <p className="text-[11px] text-red-500 mt-1.5">{errors.password}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] uppercase tracking-[2px] text-[var(--muted)] font-semibold mb-2">Confirm Password</label>
+                    <input type="password" required className="input-field" placeholder="••••••••••••" value={form.confirm} onChange={e => setField('confirm', e.target.value)} />
+                    {errors.confirm && <p className="text-[11px] text-red-500 mt-1.5">{errors.confirm}</p>}
+                  </div>
+
+                  {form.isSeller && (
+                    <div className="space-y-4 pt-4 mt-2 border-t border-[var(--line)]">
+                      <div className="flex items-center gap-2 text-[11px] uppercase tracking-[2px] text-[var(--muted)] font-semibold">
+                        <Server size={12} /> Developer Profile
+                      </div>
+                      <input className="input-field" placeholder="College / University" value={form.bio} onChange={e => setField('bio', e.target.value)} />
+                      <input className="input-field" placeholder="Core Skills (React, Node, Python...)" value={form.skills} onChange={e => setField('skills', e.target.value)} />
+                      
+                      <div>
+                        <label className="block text-[11px] uppercase tracking-[2px] text-[var(--muted)] font-semibold mb-2">Payment QR Code</label>
+                        <label className="flex flex-col items-center justify-center border-2 border-dashed border-[var(--line-strong)] hover:border-[var(--ink)] bg-[var(--surface)] p-6 rounded-2xl cursor-pointer transition-all">
+                          <input type="file" className="hidden" accept="image/*" onChange={e => setField('paymentQr', e.target.files?.[0] ?? null)} />
+                          {form.paymentQr ? (
+                            <div className="flex items-center gap-2 text-[var(--ink)] text-[13px] font-medium">
+                              <CheckCircle size={15} className="text-emerald-500" />
+                              <span className="truncate max-w-[200px]">{form.paymentQr.name}</span>
+                            </div>
+                          ) : (
+                            <span className="text-[13px] font-medium text-[var(--muted)]">Upload UPI QR</span>
+                          )}
+                        </label>
+                        {errors.paymentQr && <p className="text-[11px] text-red-500 mt-1.5">{errors.paymentQr}</p>}
                       </div>
                     </div>
                   )}
-                  <AnimatePresence>
-                    {errors.password && (
-                      <motion.p initial={{ opacity:0, height:0 }} animate={{ opacity:1, height:'auto' }} exit={{ opacity:0, height:0 }}
-                        className="text-[10px] text-red-400 mt-1.5 font-mono-co overflow-hidden">
-                        {errors.password}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                </div>
 
-                {/* Confirm */}
-                <div>
-                  <label className="block text-[9px] uppercase tracking-[2.5px] text-[var(--grey)] mb-2 font-mono-co">Confirm Password</label>
-                  <input type="password" required className="input-underline" placeholder="••••••••••••"
-                    value={form.confirm} onChange={e => setField('confirm', e.target.value)} />
-                  <AnimatePresence>
-                    {errors.confirm && (
-                      <motion.p initial={{ opacity:0, height:0 }} animate={{ opacity:1, height:'auto' }} exit={{ opacity:0, height:0 }}
-                        className="text-[10px] text-red-400 mt-1.5 font-mono-co overflow-hidden">
-                        {errors.confirm}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                {/* Seller extras */}
-                {form.isSeller && (
-                  <div className="space-y-4 border-t border-[var(--glass-border)] pt-4 animate-scale-in">
-                    <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-[1.5px] text-[var(--grey)] font-mono-co">
-                      <Server size={10} /> Developer Profile
-                    </div>
-                    <input className="input-underline" placeholder="College / University"
-                      value={form.bio} onChange={e => setField('bio', e.target.value)} />
-                    <input className="input-underline" placeholder="Core Skills (React, Node, Python...)"
-                      value={form.skills} onChange={e => setField('skills', e.target.value)} />
-                    <div>
-                      <label className="block text-[9px] uppercase tracking-[2px] text-[var(--grey)] mb-2 font-mono-co">Payment QR Code</label>
-                      <label className="flex flex-col items-center justify-center bg-[var(--glass-bg)] border border-dashed border-[var(--glass-border)] hover:border-[var(--line-hover)] p-5 rounded-lg cursor-pointer transition-all duration-300 backdrop-blur-sm">
-                        <input type="file" className="hidden" accept="image/*"
-                          onChange={e => setField('paymentQr', e.target.files?.[0] ?? null)} />
-                        {form.paymentQr ? (
-                          <div className="flex items-center gap-2 text-[var(--charcoal)] text-[11px] font-mono-co">
-                            <CheckCircle size={13} className="text-emerald-400" />
-                            <span className="truncate max-w-[180px]">{form.paymentQr.name}</span>
-                          </div>
-                        ) : (
-                          <span className="text-[11px] font-mono-co text-[var(--grey)] tracking-wide">Upload UPI QR</span>
-                        )}
-                      </label>
-                      <AnimatePresence>
-                        {errors.paymentQr && (
-                          <motion.p initial={{ opacity:0, height:0 }} animate={{ opacity:1, height:'auto' }} exit={{ opacity:0, height:0 }}
-                            className="text-[10px] text-red-400 mt-1.5 font-mono-co overflow-hidden">
-                            {errors.paymentQr}
-                          </motion.p>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3 mt-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-[11px] tracking-[2px] uppercase font-mono-co font-semibold rounded-lg transition-all shadow-[0_4px_20px_rgba(16,185,129,0.25)] disabled:opacity-50"
-                >
-                  {loading ? 'Sending Code...' : 'Continue'}
-                </button>
-              </form>
+                  <button type="submit" disabled={loading}
+                    className="w-full py-4 mt-4 rounded-full bg-[var(--ink)] text-white text-[13px] font-semibold flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-px transition-all disabled:opacity-50">
+                    {loading ? 'Sending Code...' : <><span>Continue</span><ArrowRight size={14} /></>}
+                  </button>
+                </form>
+              </>
             ) : (
-              <form onSubmit={handleSubmitFinal} className="space-y-5 animate-scale-in">
-                <div className="text-center mb-2">
-                  <p className="text-[14px] text-[var(--charcoal)] font-mono-co font-medium mb-1 tracking-wide">Verify email</p>
-                  <p className="text-[11px] text-[var(--grey)] font-light">
-                    6-digit code sent to <strong className="text-[var(--charcoal)] font-medium">{form.email}</strong>
+              <form onSubmit={handleSubmitFinal} className="space-y-6">
+                <div className="text-center mb-4">
+                  <p className="text-[16px] text-[var(--ink)] font-medium mb-1">Verify email</p>
+                  <p className="text-[13px] text-[var(--muted)] font-light">
+                    6-digit code sent to <strong className="text-[var(--ink)] font-medium">{form.email}</strong>
                   </p>
                 </div>
                 <input
-                  type="text"
-                  maxLength={6}
-                  required
-                  className="input-underline text-center text-2xl tracking-[12px] font-mono-co py-4"
-                  placeholder="000000"
-                  value={otp}
-                  onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
+                  type="text" maxLength={6} required
+                  className="w-full text-center text-3xl tracking-[16px] font-display-medium py-6 bg-[var(--surface)] border border-[var(--line-strong)] rounded-2xl text-[var(--ink)] outline-none focus:border-[var(--royal-blue)] focus:ring-2 focus:ring-[var(--royal-blue-dim)] transition-all"
+                  placeholder="000000" value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
                 />
                 <div className="flex gap-3">
                   <button type="button" onClick={() => setStep('form')} disabled={loading}
-                    className="flex-1 py-3 glass-card text-[var(--grey)] text-[10px] tracking-[2px] uppercase font-mono-co rounded-lg hover:border-[var(--line-hover)] transition-all">
-                    Back
+                    className="flex items-center justify-center gap-2 px-6 py-4 rounded-full border border-[var(--line-strong)] text-[var(--muted)] text-[13px] font-semibold hover:text-[var(--ink)] hover:bg-[var(--line)] transition-all">
+                    <ArrowLeft size={14} /> Back
                   </button>
                   <button type="submit" disabled={loading}
-                    className="flex-[2] py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-[11px] tracking-[2px] uppercase font-mono-co font-semibold rounded-lg transition-all shadow-[0_4px_20px_rgba(16,185,129,0.25)] disabled:opacity-50">
+                    className="flex-1 py-4 rounded-full bg-[var(--ink)] text-white text-[13px] font-semibold shadow-[0_4px_20px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-px transition-all disabled:opacity-50">
                     {loading ? 'Verifying...' : 'Complete Registration'}
                   </button>
                 </div>
               </form>
             )}
-          </div>
 
-          {/* Legal */}
-          <p className="text-center text-[9px] text-[var(--grey-light)] mt-5 mb-10 font-mono-co tracking-wide">
-            By joining, you agree to our{' '}
-            <Link href="#" className="underline hover:text-[var(--grey)] transition-colors">Terms</Link>
-            {' '}and{' '}
-            <Link href="#" className="underline hover:text-[var(--grey)] transition-colors">Privacy Policy</Link>
-          </p>
+            <p className="text-center text-[12px] text-[var(--muted-light)] mt-8 font-light">
+              By joining, you agree to our <Link href="#" className="underline hover:text-[var(--muted)] transition-colors">Terms</Link> and <Link href="#" className="underline hover:text-[var(--muted)] transition-colors">Privacy Policy</Link>
+            </p>
+          </motion.div>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { Package, Clock, CheckCircle, AlertCircle, Star, RefreshCw, Send, FileText } from 'lucide-react'
+import { motion } from 'framer-motion'
 import Navbar from '@/components/layout/Navbar'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
@@ -81,79 +82,82 @@ export default function BuyerDashboard() {
   const displayed = activeTab === 'active' ? active : completed
 
   return (
-    <div className="min-h-screen bg-[var(--paper)]">
+    <div className="aurora-page min-h-screen">
       <Navbar />
       {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)}/>}
 
-      <div className="max-w-6xl mx-auto px-8 py-12 pt-24">
+      <div className="max-w-6xl mx-auto px-6 lg:px-12 pt-28 pb-20">
         {/* Header */}
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <p className="text-[9px] uppercase tracking-[4px] text-[var(--forest-light)] font-medium font-[Jost] mb-1">Buyer Dashboard</p>
-            <h1 className="font-display text-4xl font-light text-[var(--charcoal)]">
-              Hello, <em>{user?.name?.split(' ')[0] || user?.email?.split('@')[0]}.</em>
+        <div className="flex items-end justify-between mb-14">
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16,1,0.3,1] }}>
+            <p className="text-[11px] uppercase tracking-[2.5px] text-[var(--muted)] font-semibold mb-2">Buyer Workspace</p>
+            <h1 className="font-display text-display text-[var(--ink)]">
+              Hello, {user?.name?.split(' ')[0] || user?.email?.split('@')[0]}.
             </h1>
-          </div>
-          <div className="flex gap-4">
-            <button onClick={fetchOrders} className="text-[10px] uppercase tracking-[2px] text-[var(--grey-light)] font-[Jost] mb-2 hover:text-[var(--forest)]">
-              <RefreshCw size={14} className={dataLoading ? 'animate-spin' : ''}/>
+          </motion.div>
+          <div className="flex gap-3">
+            <button onClick={fetchOrders} className="w-9 h-9 rounded-full border border-[var(--line-strong)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--ink)] transition-all">
+              <RefreshCw size={14} className={dataLoading ? 'animate-spin' : ''} />
             </button>
             <Link href="/browse"><Button size="md">+ New Order</Button></Link>
           </div>
         </div>
 
-        {/* Stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-[1px] bg-[var(--line)] mb-10 border-[0.5px] border-[var(--line)]">
+        {/* Floating stats — no boxes */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14 pb-14 border-b border-[var(--line)]">
           {[
-            { label: 'Active Orders', val: active.length, icon: <Clock size={14}/> },
-            { label: 'Completed', val: completed.length, icon: <CheckCircle size={14}/> },
-            { label: 'Total Spent', val: `₹${orders.reduce((s,o)=>s+o.price,0).toLocaleString()}`, icon: <Star size={14}/> },
-            { label: 'Support Tickets', val: 0, icon: <AlertCircle size={14}/> },
-          ].map(s => (
-            <div key={s.label} className="bg-[var(--paper)] p-6">
-              <div className="flex items-center gap-2 text-[var(--grey-light)] mb-2">
-                {s.icon}<span className="text-[9px] uppercase tracking-[2px] font-[Jost] font-medium">{s.label}</span>
+            { label: 'Active Orders',   val: active.length,    icon: <Clock size={14}/> },
+            { label: 'Completed',       val: completed.length, icon: <CheckCircle size={14}/> },
+            { label: 'Total Spent',     val: `₹${orders.reduce((s,o)=>s+o.price,0).toLocaleString()}`, icon: <Star size={14}/> },
+            { label: 'Support Tickets', val: 0,                icon: <AlertCircle size={14}/> },
+          ].map((s, i) => (
+            <motion.div key={s.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16,1,0.3,1] }}>
+              <div className="font-display text-[42px] text-[var(--ink)] leading-none mb-2">{s.val}</div>
+              <div className="flex items-center gap-1.5 text-[11px] text-[var(--muted)] font-medium uppercase tracking-[1.5px]">
+                {s.icon} {s.label}
               </div>
-              <div className="font-display text-3xl font-light text-[var(--charcoal)]">{s.val}</div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        {/* Tabs */}
-        <div className="flex border-b border-[var(--line)] mb-8">
+        {/* Pill tabs */}
+        <div className="flex gap-2 mb-8">
           {[
             { key: 'active', label: `Active (${active.length})` },
             { key: 'completed', label: 'History' },
           ].map(tab => (
-            <button key={tab.key} onClick={() => setActiveTab(tab.key as any)}
-              className={`px-6 py-3 text-[11px] uppercase tracking-[2px] font-medium font-[Jost] border-b-2 transition-colors
-                ${activeTab===tab.key ? 'border-[var(--forest)] text-[var(--forest)]' : 'border-transparent text-[var(--grey-light)] hover:text-[var(--grey)]'}`}>
-              {tab.label}
-            </button>
+            <button key={tab.key} onClick={() => setActiveTab(tab.key as 'active' | 'completed')}
+              className={`px-5 py-2.5 rounded-full text-[12px] font-semibold transition-all ${
+                activeTab === tab.key
+                  ? 'bg-[var(--ink)] text-white shadow-[0_2px_12px_rgba(15,23,42,0.20)]'
+                  : 'bg-transparent text-[var(--muted)] border border-[var(--line-strong)] hover:border-[var(--ink)] hover:text-[var(--ink)]'
+              }`}
+            >{tab.label}</button>
           ))}
         </div>
+
 
         {dataLoading ? (
           <div className="text-center py-20"><RefreshCw size={24} className="mx-auto animate-spin text-[var(--grey-light)]"/></div>
         ) : displayed.length === 0 ? (
-          <div className="text-center py-32 border-[0.5px] border-dashed border-[var(--line)]">
-            <Package size={32} className="mx-auto mb-4 text-[var(--line)]"/>
-            <p className="text-[13px] text-[var(--grey)] font-[Jost]">No orders found in this category.</p>
+          <div className="bento-card flex flex-col items-center py-28 text-center">
+            <div className="font-display text-[64px] text-[var(--line-strong)] leading-none mb-4 select-none">∅</div>
+            <p className="font-display-medium text-[18px] text-[var(--muted)]">No orders in this category.</p>
           </div>
         ) : (
           <div className="space-y-4">
             {displayed.map(order => (
-              <div key={order.id} className="border-[0.5px] border-[var(--line)] bg-[var(--paper)] hover:border-[var(--forest)]/30 transition-colors">
-                <div className={`h-[2px] ${order.status==='COMPLETED'?'bg-[var(--forest)]':'bg-[var(--teal)]'}`}/>
+              <div key={order.id} className="bento-card overflow-hidden hover:-translate-y-0.5 transition-all">
+                <div className={`h-[3px] ${order.status==='COMPLETED'?'bg-emerald-400':'bg-blue-400'}`}/>
                 <div className="p-6">
                   <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
                     <div>
                       <div className="flex items-center gap-3 mb-2">
-                        <Badge variant={order.status==='COMPLETED'?'forest':'teal'} size="sm">{order.status}</Badge>
-                        <span className="text-[10px] text-[var(--grey-light)] font-[Jost]">Order #CO-{order.id.slice(-8).toUpperCase()}</span>
+                        <Badge variant={order.status==='COMPLETED'?'green':'blue'} size="sm">{order.status}</Badge>
+                        <span className="text-[11px] text-[var(--muted)] font-medium">Order #CO-{order.id.slice(-8).toUpperCase()}</span>
                       </div>
-                      <h3 className="text-[15px] font-medium text-[var(--charcoal)] font-[Jost] mb-1">{order.gig.title}</h3>
-                      <p className="text-[12px] text-[var(--grey)] font-[Jost] font-light">
+                      <h3 className="font-display-medium text-[16px] text-[var(--ink)] mb-1">{order.gig.title}</h3>
+                      <p className="text-[13px] text-[var(--muted)] font-light">
                         {order.package} Package · Seller: {order.seller.name} · ₹{order.price.toLocaleString()}
                       </p>
                     </div>

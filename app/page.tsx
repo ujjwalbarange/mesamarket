@@ -1,77 +1,60 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Zap, Code2, FlaskConical, GraduationCap, Shield, Clock } from 'lucide-react'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { ArrowRight, Search, Zap, Code2, FlaskConical, GraduationCap, Shield, Clock, Star, ArrowUpRight } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import GigCard from '@/components/gig/GigCard'
 import type { Gig } from '@/types'
 
-const CATEGORIES = [
-  { icon: Zap,           label: 'AI Automation',  count: 124 },
-  { icon: Code2,         label: 'Web Development', count: 213 },
-  { icon: FlaskConical,  label: 'Data Science',    count: 87  },
-  { icon: GraduationCap, label: 'CS Academic',     count: 156 },
-]
-
-const STATS = [
-  { num: '300+', label: 'Vetted Developers' },
-  { num: '98%',  label: 'Delivery Rate' },
-  { num: '4.9',  label: 'Avg Rating' },
-  { num: '48h',  label: 'Avg Response' },
-]
-
-const TRUST = [
-  { icon: Shield, title: 'Vetted Talent', desc: 'Every university engineer is manually audited for clean architecture, communication, and milestone reliability.' },
-  { icon: Clock,  title: 'Escrow Delivery', desc: 'C-Oasis holds funds until code passes review. Zero code-dumps, zero surprises.' },
-  { icon: Zap,    title: 'Fixed Pricing',   desc: 'Bespoke fixed-budget contracts locked upfront in secure escrow with transparent milestones.' },
-]
-
-const GigCardSkeleton = () => (
-  <div className="glass-card depth-sm p-4 h-[380px] flex flex-col gap-4 animate-pulse select-none">
-    <div className="aspect-[4/3] w-full bg-white/10 rounded-xl" />
-    <div className="space-y-2 flex-1">
-      <div className="h-3 bg-white/10 rounded w-16" />
-      <div className="h-4 bg-white/10 rounded w-3/4 mt-2" />
-      <div className="h-4 bg-white/10 rounded w-5/6" />
-    </div>
-    <div className="flex items-center justify-between pt-3 border-t border-white/10 mt-auto">
-      <div className="h-4 bg-white/10 rounded w-16" />
-      <div className="h-3 bg-white/10 rounded w-10" />
-    </div>
-  </div>
-)
-
-/* ── Scroll-reveal hook using IntersectionObserver ── */
-function useScrollReveal(rootMargin = '0px 0px -60px 0px') {
+/* ── Scroll reveal hook ────────────────────────────────────────── */
+function useReveal() {
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => { 
-        if (entry.isIntersecting) { 
-          el.classList.add('revealed')
-          observer.disconnect() 
-        } 
-      },
-      { rootMargin }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [rootMargin])
+    const el = ref.current; if (!el) return
+    const ob = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.classList.add('revealed'); ob.disconnect() } }, { rootMargin: '0px 0px -60px 0px' })
+    ob.observe(el)
+    return () => ob.disconnect()
+  }, [])
   return ref
 }
+
+/* ── Static data ───────────────────────────────────────────────── */
+const STATS = [
+  { num: '300+', label: 'Vetted Engineers' },
+  { num: '98%',  label: 'On-Time Delivery' },
+  { num: '4.9',  label: 'Avg Rating'       },
+  { num: '48h',  label: 'Avg Response'     },
+]
+const CATEGORIES = [
+  { icon: Zap,           label: 'AI & Automation',  count: 124, color: 'text-amber-500'   },
+  { icon: Code2,         label: 'Web Development',  count: 213, color: 'text-blue-500'    },
+  { icon: FlaskConical,  label: 'Data Science',     count: 87,  color: 'text-emerald-500' },
+  { icon: GraduationCap, label: 'CS Academic',      count: 156, color: 'text-purple-500'  },
+]
+const HOW = [
+  { n: '01', title: 'Browse & Discover',   desc: 'Explore 300+ vetted university engineers across AI, web, data, and more.' },
+  { n: '02', title: 'Secure Your Escrow',  desc: 'Lock in a fixed-budget contract. Your payment is held safely until delivery.' },
+  { n: '03', title: 'Ship with Confidence',desc: 'Review the work, request revisions, and release funds when you\'re satisfied.' },
+]
+const TRUST = [
+  { icon: Shield, title: 'Escrow Protection', desc: 'Funds held securely until you approve the delivered code.' },
+  { icon: Clock,  title: 'Fixed Timelines',   desc: 'Clear milestones, zero ambiguity. Deadlines are contractual.' },
+  { icon: Star,   title: 'Verified Reviews',  desc: 'Every review comes from a confirmed, completed order.' },
+]
 
 export default function HomePage() {
   const [gigs, setGigs] = useState<Gig[]>([])
   const [gigsLoading, setGigsLoading] = useState(true)
+  const { scrollYProgress } = useScroll()
+  const heroY = useTransform(scrollYProgress, [0, 0.4], [0, -60])
 
-  /* Scroll-reveal refs */
-  const catRef    = useScrollReveal()
-  const gigsRef   = useScrollReveal()
-  const trustRef  = useScrollReveal()
-  const ctaRef    = useScrollReveal()
+  const catRef   = useReveal()
+  const howRef   = useReveal()
+  const gigsRef  = useReveal()
+  const trustRef = useReveal()
+  const ctaRef   = useReveal()
 
   useEffect(() => {
     fetch('/api/gigs?limit=6&sort=popular')
@@ -82,308 +65,304 @@ export default function HomePage() {
   }, [])
 
   return (
-    <>
-      {/* ── Fixed cinematic landscape background ─────────────────── */}
-      <div className="horizon-canvas" aria-hidden="true" />
-      <div className="horizon-overlay" aria-hidden="true" />
+    <div className="aurora-page min-h-screen">
+      <Navbar />
 
-      {/* ── Scrollable content above the fixed backdrop ───────────── */}
-      <div className="relative z-10 min-h-screen flex flex-col">
-        <Navbar />
+      {/* ════════════════════════════════════════════════
+          HERO
+      ════════════════════════════════════════════════ */}
+      <section className="relative min-h-screen flex items-center overflow-hidden pt-[68px]">
+        {/* Aurora orbs */}
+        <div className="aurora-orb-blue w-[700px] h-[700px] top-[-15%] right-[-10%] opacity-60" />
+        <div className="aurora-orb-cyan w-[500px] h-[500px] bottom-[-10%] left-[-8%] opacity-50" />
 
-        {/* ══ HERO ═══════════════════════════════════════════════════ */}
-        <section className="flex-1 flex items-center min-h-screen pt-14 px-6 lg:px-20">
-          <div className="max-w-7xl mx-auto w-full">
-            <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center py-20 lg:py-28">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-16 py-20 lg:py-32">
+          <motion.div style={{ y: heroY }}>
+            <div className="max-w-4xl">
+              {/* Pill label */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--glass)] backdrop-blur-md border border-[var(--glass-border)] text-[11px] font-medium text-[var(--ink-soft)] mb-8 shadow-[var(--shadow-sm)]"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-shimmer" />
+                Vetted · Escrowed · Delivered
+              </motion.div>
 
-              {/* Left copy — staggered hero entrance */}
-              <div className="lg:col-span-6 flex flex-col text-center lg:text-left">
+              {/* Giant headline */}
+              <motion.h1
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                className="font-display text-hero text-[var(--ink)] mb-7"
+              >
+                Build the future
+                <br />
+                <span className="text-[var(--royal-blue)]">with elite</span>
+                <br />
+                university talent.
+              </motion.h1>
 
-                {/* Badge */}
-                <div className="hero-rise hero-rise-1 inline-flex items-center gap-2 px-3 py-1.5 glass-card depth-sm text-[9px] uppercase tracking-[2.5px] text-[var(--grey)] font-mono-co mb-7 w-fit mx-auto lg:mx-0 rounded-full">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-shimmer" />
-                  Vetted · Escrowed · Delivered
-                </div>
+              {/* Sub */}
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}
+                className="text-[17px] text-[var(--muted)] leading-relaxed max-w-xl mb-10 font-light"
+              >
+                The boutique marketplace connecting forward-thinking brands with
+                vetted CS engineers — all work escrowed, milestone-driven, zero risk.
+              </motion.p>
 
-                {/* Headline — word-by-word feel via two lines */}
-                <h1 className="hero-rise hero-rise-2 font-display text-[clamp(3rem,7vw,5.5rem)] leading-[1.0] text-[var(--charcoal)] mb-5 tracking-wide">
-                  Get your<br />
-                  perfect builder.
-                </h1>
+              {/* Search bar */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.52, ease: [0.16, 1, 0.3, 1] }}
+                className="flex gap-3 mb-12 max-w-lg"
+              >
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    const q = (e.currentTarget.elements.namedItem('q') as HTMLInputElement).value
+                    window.location.href = `/browse?search=${encodeURIComponent(q)}`
+                  }}
+                  className="flex-1 flex gap-2"
+                >
+                  <div className="flex-1 relative">
+                    <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-light)] pointer-events-none" />
+                    <input
+                      type="text" name="q"
+                      placeholder="React, Next.js, LangChain..."
+                      className="w-full pl-11 pr-4 py-3.5 rounded-full text-[14px] bg-[var(--surface)] border border-[var(--line-strong)] text-[var(--ink)] placeholder:text-[var(--muted-light)] outline-none focus:border-[var(--royal-blue)] focus:ring-2 focus:ring-[var(--royal-blue-dim)] shadow-[var(--shadow-sm)] transition-all"
+                    />
+                  </div>
+                  <button type="submit" className="px-6 py-3.5 rounded-full bg-[var(--ink)] text-white text-[13px] font-medium shadow-[0_4px_20px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-px transition-all">
+                    Search
+                  </button>
+                </form>
+              </motion.div>
 
-                {/* Sub-copy */}
-                <p className="hero-rise hero-rise-3 text-[15px] leading-[1.9] text-[var(--grey)] max-w-md mb-9 mx-auto lg:mx-0 font-light tracking-wide">
-                  The boutique forge where university engineers build
-                  high-performance web systems and AI tools for forward-thinking brands.
-                </p>
-
-                {/* CTAs */}
-                <div className="hero-rise hero-rise-4 flex items-center gap-4 flex-wrap justify-center lg:justify-start mb-14">
-                  <Link href="/browse">
-                    <button className="flex items-center gap-2 px-7 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-[11px] tracking-[2px] uppercase font-mono-co font-semibold rounded-xl transition-all duration-300 shadow-[0_6px_28px_rgba(16,185,129,0.35)] hover:shadow-[0_8px_36px_rgba(16,185,129,0.45)] hover:-translate-y-0.5">
-                      Explore Gigs <ArrowRight size={13} />
-                    </button>
-                  </Link>
-                  <Link href="/auth/register">
-                    <button className="px-7 py-3.5 glass-card depth-sm text-[var(--charcoal)] text-[11px] tracking-[2px] uppercase font-mono-co rounded-xl hover:border-[var(--line-hover)] hover:-translate-y-0.5 transition-all duration-300">
-                      Become a Seller
-                    </button>
-                  </Link>
-                </div>
-
-                {/* Stats row */}
-                <div className="hero-rise hero-rise-5 hidden md:grid grid-cols-4 gap-5 pt-7 border-t border-[var(--glass-border)]">
-                  {STATS.map((s, i) => (
-                    <div key={s.label} className="space-y-1" style={{ animationDelay: `${0.55 + i * 0.08}s` }}>
-                      <div className="font-mono-co text-[22px] font-medium text-[var(--charcoal)] tracking-tight">{s.num}</div>
-                      <div className="text-[9px] uppercase tracking-[2px] text-[var(--grey)] font-mono-co">{s.label}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right — Marketplace panel with depth */}
-              <div className="lg:col-span-6 flex justify-center lg:justify-end panel-slide">
-                <div className="w-full max-w-[440px]">
-                  <MarketplacePanel />
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* ══ Below-fold: solid bg, scroll-reveal sections ═════════ */}
-        <div className="bg-[var(--paper)] relative z-10">
-
-          {/* ── Scroll transition gradient edge ── */}
-          <div className="h-px bg-gradient-to-r from-transparent via-[var(--glass-border-subtle)] to-transparent" />
-
-          {/* CATEGORIES */}
-          <section className="border-b border-[var(--glass-border-subtle)] bg-[var(--paper)]">
-            <div ref={catRef} className="scroll-reveal max-w-7xl mx-auto px-6 lg:px-16 py-14">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {CATEGORIES.map((cat, i) => {
-                  const Icon = cat.icon
-                  return (
-                    <Link
-                      key={cat.label}
-                      href={`/browse?category=${encodeURIComponent(cat.label)}`}
-                      className={`cyber-border-container depth-sm p-5 flex items-center gap-4 group transition-all duration-300 hover:border-[var(--line-solid)] hover:-translate-y-0.5 hover:depth-md scroll-reveal-child delay-${i + 1}`}
-                      style={{ transitionDelay: `${i * 0.07}s` }}
-                    >
-                      <div className="w-9 h-9 border border-[var(--glass-border)] rounded-lg flex items-center justify-center bg-[var(--surface)] group-hover:border-[var(--line-solid)] transition-all duration-300">
-                        <Icon size={14} className="text-[var(--grey-light)] group-hover:text-[var(--charcoal)] transition-colors duration-300" />
-                      </div>
-                      <div>
-                        <div className="text-[11px] font-mono-co font-medium text-[var(--grey)] group-hover:text-[var(--charcoal)] transition-colors tracking-wide">{cat.label}</div>
-                        <div className="text-[9px] font-mono-co text-[var(--grey-light)] mt-0.5 tracking-wider">{cat.count} active</div>
-                      </div>
-                    </Link>
-                  )
-                })}
-              </div>
-            </div>
-          </section>
-
-          {/* POPULAR GIGS */}
-          <section className="max-w-7xl mx-auto px-6 lg:px-16 py-24">
-            <div ref={gigsRef} className="scroll-reveal">
-              <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
-                <div>
-                  <div className="text-[9px] uppercase tracking-[2.5px] text-[var(--grey)] font-mono-co mb-3">Verified Escrows</div>
-                  <h2 className="font-display-medium text-[28px] text-[var(--charcoal)] tracking-wide">Active compiler nodes</h2>
-                </div>
-                <Link href="/browse" className="flex items-center gap-2 text-[10px] uppercase tracking-[2px] font-mono-co text-[var(--grey)] hover:text-[var(--charcoal)] transition-colors shrink-0">
-                  All Contracts <ArrowRight size={11} />
+              {/* CTAs */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.64, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-wrap items-center gap-4"
+              >
+                <Link href="/browse">
+                  <button className="flex items-center gap-2 px-7 py-3.5 rounded-full bg-[var(--ink)] text-white text-[13px] font-medium shadow-[0_4px_24px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:shadow-[0_8px_32px_rgba(15,23,42,0.32)] hover:-translate-y-0.5 transition-all duration-300">
+                    Browse Marketplace <ArrowRight size={14} />
+                  </button>
                 </Link>
-              </div>
-
-              {gigsLoading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <GigCardSkeleton /><GigCardSkeleton /><GigCardSkeleton />
-                </div>
-              ) : gigs.length === 0 ? (
-                <div className="cyber-border-container depth-sm p-20 text-center">
-                  <p className="text-[var(--grey)] font-mono-co text-sm tracking-wide">No verified contracts active in this network segment.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {gigs.map((gig, i) => (
-                    <div key={gig.id} className="scroll-reveal-child" style={{ transitionDelay: `${i * 0.10}s` }}>
-                      <GigCard gig={gig} />
-                    </div>
-                  ))}
-                </div>
-              )}
+                <Link href="/auth/register">
+                  <button className="flex items-center gap-2 px-7 py-3.5 rounded-full bg-[var(--glass)] backdrop-blur-md border border-[var(--glass-border)] text-[var(--ink)] text-[13px] font-medium shadow-[var(--shadow-sm)] hover:bg-[var(--glass-heavy)] hover:-translate-y-0.5 transition-all duration-300">
+                    Sell Your Skills
+                  </button>
+                </Link>
+              </motion.div>
             </div>
-          </section>
+          </motion.div>
 
-          {/* TRUST */}
-          <section className="border-t border-[var(--glass-border-subtle)] py-24">
-            <div ref={trustRef} className="scroll-reveal max-w-7xl mx-auto px-6 lg:px-16">
-              <div className="text-[9px] uppercase tracking-[2.5px] text-[var(--grey)] font-mono-co mb-3">Oasis Managed</div>
-              <h2 className="font-display-medium text-[28px] text-[var(--charcoal)] mb-16 tracking-wide">Vetted security. Direct compiler links.</h2>
-              <div className="grid md:grid-cols-3 gap-6">
-                {TRUST.map((item, i) => {
-                  const Icon = item.icon
-                  return (
-                    <div
-                      key={item.title}
-                      className="cyber-border-container depth-md p-8 flex flex-col gap-4 hover:-translate-y-1 hover:depth-lg transition-all duration-400"
-                      style={{ transitionDelay: `${i * 0.1}s` }}
-                    >
-                      <div className="w-9 h-9 border border-[var(--glass-border)] rounded-xl flex items-center justify-center bg-[var(--surface)]">
-                        <Icon size={15} className="text-[var(--grey)]" />
-                      </div>
-                      <h3 className="font-display-medium text-[16px] text-[var(--charcoal)] tracking-wide">{item.title}</h3>
-                      <p className="text-[12px] text-[var(--grey)] leading-relaxed font-light">{item.desc}</p>
-                    </div>
-                  )
-                })}
+          {/* Floating stats — no boxes, free typography */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute right-0 bottom-16 lg:bottom-24 lg:right-16 hidden lg:grid grid-cols-2 gap-x-16 gap-y-10"
+          >
+            {STATS.map(s => (
+              <div key={s.label}>
+                <div className="font-display text-[44px] text-[var(--ink)] leading-none">{s.num}</div>
+                <div className="text-[12px] text-[var(--muted)] mt-1 font-medium tracking-wide">{s.label}</div>
               </div>
-            </div>
-          </section>
-
-          {/* CTA */}
-          <section className="max-w-7xl mx-auto px-6 lg:px-16 py-24">
-            <div ref={ctaRef} className="scroll-reveal">
-              <div className="cyber-border-container depth-lg p-12 lg:p-16 flex flex-col md:flex-row items-center justify-between gap-8">
-                <div className="text-center md:text-left">
-                  <h2 className="font-display-medium text-[26px] text-[var(--charcoal)] mb-2 tracking-wide">Ready to verify a software node?</h2>
-                  <p className="text-[12px] text-[var(--grey)] font-light tracking-wide">Deploy fixed-budget contracts to checked engineers in minutes.</p>
-                </div>
-                <div className="flex gap-4 shrink-0">
-                  <Link href="/browse">
-                    <button className="px-7 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-[11px] tracking-[2px] uppercase font-mono-co font-semibold rounded-xl transition-all shadow-[0_4px_24px_rgba(16,185,129,0.28)] hover:shadow-[0_6px_32px_rgba(16,185,129,0.38)] hover:-translate-y-0.5">
-                      Explore Gigs
-                    </button>
-                  </Link>
-                  <Link href="/auth/register">
-                    <button className="px-7 py-3 glass-card depth-sm text-[var(--charcoal)] text-[11px] tracking-[2px] uppercase font-mono-co rounded-xl hover:border-[var(--line-solid)] hover:-translate-y-0.5 transition-all">
-                      Join as Seller
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <Footer />
+            ))}
+          </motion.div>
         </div>
-      </div>
-    </>
-  )
-}
 
-/* ─── Marketplace Panel ─────────────────────────────────────────── */
-const LIVE_CATEGORIES = [
-  { label: 'Web Development',  count: 213, tag: 'Most Active' },
-  { label: 'AI & Automation',  count: 124, tag: '' },
-  { label: 'Data Science',     count: 87,  tag: '' },
-  { label: 'CS Academic',      count: 156, tag: '' },
-]
+        {/* Scroll hint */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.4, duration: 0.6 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[var(--muted-light)]"
+        >
+          <div className="w-px h-10 bg-gradient-to-b from-transparent via-[var(--muted-light)] to-transparent animate-pulse" />
+          <span className="text-[10px] uppercase tracking-[2px] font-medium">Scroll</span>
+        </motion.div>
+      </section>
 
-const FEATURED_DEVS = [
-  { initial: 'A', name: 'Arjun M.', skill: 'React · Next.js', rate: '₹4,500', rating: '4.9' },
-  { initial: 'P', name: 'Priya S.', skill: 'ML · PyTorch',    rate: '₹6,200', rating: '5.0' },
-  { initial: 'R', name: 'Rohan K.', skill: 'Node · AWS',      rate: '₹3,800', rating: '4.8' },
-]
-
-function MarketplacePanel() {
-  return (
-    <div className="glass-panel-heavy depth-panel rounded-2xl overflow-hidden w-full">
-
-      {/* Header */}
-      <div className="px-6 pt-6 pb-4 border-b border-[var(--glass-border)]">
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[9px] uppercase tracking-[2.5px] font-mono-co text-[var(--grey)]">Live Marketplace</span>
-          <span className="flex items-center gap-1.5 text-[9px] font-mono-co text-emerald-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-shimmer" />
-            300+ active gigs
-          </span>
-        </div>
-        <p className="font-display text-[22px] text-[var(--charcoal)] leading-tight tracking-wide">
-          Find your builder,<br/>set the escrow.
-        </p>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-3 border-b border-[var(--glass-border)]">
-        {[
-          { num: '98%', label: 'On-Time' },
-          { num: '48h', label: 'First Reply' },
-          { num: '4.9★', label: 'Avg Rating' },
-        ].map((s) => (
-          <div key={s.label} className="flex flex-col items-center justify-center py-4 border-r border-[var(--glass-border)] last:border-r-0">
-            <span className="font-mono-co text-[17px] font-semibold text-[var(--charcoal)] tracking-tight">{s.num}</span>
-            <span className="text-[8px] uppercase tracking-[1.5px] text-[var(--grey)] font-mono-co mt-0.5">{s.label}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Categories */}
-      <div className="px-6 pt-4 pb-2">
-        <div className="text-[8px] uppercase tracking-[2px] text-[var(--grey)] font-mono-co mb-3">Top Categories</div>
-        <div className="space-y-2">
-          {LIVE_CATEGORIES.map((cat) => (
-            <Link
-              key={cat.label}
-              href={`/browse?category=${encodeURIComponent(cat.label)}`}
-              className="flex items-center justify-between py-2 px-3 rounded-lg bg-[var(--glass-bg)] border border-[var(--glass-border)] hover:border-[var(--line-hover)] hover:-translate-y-px transition-all group depth-sm"
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-mono-co text-[var(--grey)] group-hover:text-[var(--charcoal)] tracking-wide transition-colors">{cat.label}</span>
-                {cat.tag && <span className="text-[7px] px-1.5 py-px bg-emerald-500/15 text-emerald-400 rounded font-mono-co uppercase tracking-wider">{cat.tag}</span>}
-              </div>
-              <span className="text-[9px] font-mono-co text-[var(--grey-light)] group-hover:text-[var(--grey)] transition-colors">{cat.count} gigs ›</span>
+      {/* ════════════════════════════════════════════════
+          CATEGORIES
+      ════════════════════════════════════════════════ */}
+      <section className="bg-[var(--bg)] relative z-10 border-t border-[var(--line)] py-20">
+        <div ref={catRef} className="scroll-reveal max-w-7xl mx-auto px-6 lg:px-16">
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <p className="text-[11px] uppercase tracking-[2.5px] text-[var(--muted)] font-semibold mb-3">Specializations</p>
+              <h2 className="font-display text-editorial text-[var(--ink)]">Built for every stack.</h2>
+            </div>
+            <Link href="/browse" className="hidden md:flex items-center gap-2 text-[12px] font-medium text-[var(--muted)] hover:text-[var(--ink)] transition-colors">
+              All Categories <ArrowUpRight size={14} />
             </Link>
-          ))}
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {CATEGORIES.map((cat, i) => {
+              const Icon = cat.icon
+              return (
+                <Link
+                  key={cat.label}
+                  href={`/browse?category=${encodeURIComponent(cat.label)}`}
+                  className="scroll-reveal-child group bento-card p-6 hover:-translate-y-2 transition-all duration-300"
+                  style={{ transitionDelay: `${i * 0.08}s` }}
+                >
+                  <div className={`mb-4 ${cat.color}`}><Icon size={22} /></div>
+                  <div className="font-display-medium text-[15px] text-[var(--ink)] mb-1 group-hover:text-[var(--royal-blue)] transition-colors">{cat.label}</div>
+                  <div className="text-[12px] text-[var(--muted-light)]">{cat.count} active gigs</div>
+                </Link>
+              )
+            })}
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Featured devs */}
-      <div className="px-6 pt-4 pb-2 border-t border-[var(--glass-border)] mt-2">
-        <div className="text-[8px] uppercase tracking-[2px] text-[var(--grey)] font-mono-co mb-3">Featured Developers</div>
-        <div className="space-y-2">
-          {FEATURED_DEVS.map((dev) => (
-            <div key={dev.name} className="flex items-center justify-between py-2 px-3 rounded-lg bg-[var(--glass-bg)] border border-[var(--glass-border)] depth-sm">
-              <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg bg-[var(--capsule-bg)] border border-[var(--glass-border)] flex items-center justify-center text-[11px] font-semibold font-mono-co text-[var(--charcoal)]">
-                  {dev.initial}
-                </div>
+      {/* ════════════════════════════════════════════════
+          HOW IT WORKS — editorial floating numbers
+      ════════════════════════════════════════════════ */}
+      <section id="how-it-works" className="py-28 bg-[var(--bg)] relative overflow-hidden">
+        <div className="aurora-orb-blue w-[400px] h-[400px] right-[-10%] top-[10%] opacity-20 absolute" />
+        <div ref={howRef} className="scroll-reveal max-w-7xl mx-auto px-6 lg:px-16 relative z-10">
+          <div className="mb-16">
+            <p className="text-[11px] uppercase tracking-[2.5px] text-[var(--muted)] font-semibold mb-3">Process</p>
+            <h2 className="font-display text-editorial text-[var(--ink)] max-w-md">Simple. Secure. Delivered.</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-0 relative">
+            {/* Connector line */}
+            <div className="hidden md:block absolute top-8 left-[16.6%] right-[16.6%] h-px bg-[var(--line)]" />
+            {HOW.map((step, i) => (
+              <div
+                key={step.n}
+                className="scroll-reveal-child relative flex flex-col gap-5 p-8"
+                style={{ transitionDelay: `${i * 0.12}s` }}
+              >
+                {/* Big floating number */}
+                <div className="font-display text-[80px] leading-none text-[var(--line-strong)] select-none mb-2">{step.n}</div>
                 <div>
-                  <div className="text-[10px] font-mono-co font-medium text-[var(--charcoal)] tracking-wide">{dev.name}</div>
-                  <div className="text-[8px] text-[var(--grey)] font-mono-co tracking-wide">{dev.skill}</div>
+                  <h3 className="font-display-medium text-[18px] text-[var(--ink)] mb-2">{step.title}</h3>
+                  <p className="text-[14px] text-[var(--muted)] leading-relaxed font-light">{step.desc}</p>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-[10px] font-mono-co font-semibold text-[var(--charcoal)]">{dev.rate}</div>
-                <div className="text-[8px] text-emerald-400 font-mono-co">{dev.rating}★</div>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* CTA */}
-      <div className="px-6 pt-4 pb-6">
-        <div className="flex gap-3">
-          <Link href="/browse" className="flex-1">
-            <button className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-[10px] tracking-[2px] uppercase font-mono-co font-semibold rounded-lg transition-all shadow-[0_4px_16px_rgba(16,185,129,0.25)] hover:-translate-y-px">
-              Browse All Gigs
-            </button>
-          </Link>
-          <Link href="/auth/register" className="flex-1">
-            <button className="w-full py-2.5 bg-[var(--glass-bg)] border border-[var(--glass-border)] hover:border-[var(--line-hover)] text-[var(--charcoal)] text-[10px] tracking-[2px] uppercase font-mono-co rounded-lg transition-all backdrop-blur-sm hover:-translate-y-px depth-sm">
-              Post a Project
-            </button>
-          </Link>
+      {/* ════════════════════════════════════════════════
+          POPULAR GIGS
+      ════════════════════════════════════════════════ */}
+      <section className="py-28 bg-[var(--bg-secondary)] border-t border-[var(--line)]">
+        <div ref={gigsRef} className="scroll-reveal max-w-7xl mx-auto px-6 lg:px-16">
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <p className="text-[11px] uppercase tracking-[2.5px] text-[var(--muted)] font-semibold mb-3">Marketplace</p>
+              <h2 className="font-display text-editorial text-[var(--ink)]">Popular gigs.</h2>
+            </div>
+            <Link href="/browse" className="hidden md:flex items-center gap-2 text-[12px] font-medium text-[var(--muted)] hover:text-[var(--ink)] transition-colors">
+              Browse All <ArrowUpRight size={14} />
+            </Link>
+          </div>
+
+          {gigsLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1,2,3].map(i => (
+                <div key={i} className="bento-card h-[380px] animate-pulse">
+                  <div className="h-48 bg-[var(--line)] rounded-[20px] m-3" />
+                  <div className="p-5 space-y-3">
+                    <div className="h-3 bg-[var(--line)] rounded-full w-24" />
+                    <div className="h-4 bg-[var(--line)] rounded-full w-4/5" />
+                    <div className="h-4 bg-[var(--line)] rounded-full w-3/5" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : gigs.length === 0 ? (
+            <div className="bento-card p-20 text-center">
+              <p className="font-display text-[20px] text-[var(--muted)] font-light">No gigs active right now.</p>
+              <p className="text-[13px] text-[var(--muted-light)] mt-2">Check back soon or browse categories above.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {gigs.map((gig, i) => (
+                <div key={gig.id} className="scroll-reveal-child" style={{ transitionDelay: `${i * 0.09}s` }}>
+                  <GigCard gig={gig} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-        <p className="text-center text-[8px] text-[var(--grey-light)] font-mono-co tracking-wide mt-3">
-          Escrow-protected · No hidden fees · 48h avg turnaround
-        </p>
-      </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════
+          TRUST
+      ════════════════════════════════════════════════ */}
+      <section id="trust" className="section-dark py-28">
+        <div ref={trustRef} className="scroll-reveal max-w-7xl mx-auto px-6 lg:px-16">
+          <div className="mb-16">
+            <p className="text-[11px] uppercase tracking-[2.5px] text-blue-400 font-semibold mb-3">Why C-Oasis</p>
+            <h2 className="font-display text-editorial text-white max-w-lg">Built on trust, delivered with precision.</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            {TRUST.map((item, i) => {
+              const Icon = item.icon
+              return (
+                <div
+                  key={item.title}
+                  className="scroll-reveal-child bento-card-glass border border-white/10 p-8 hover:-translate-y-2 transition-all duration-300"
+                  style={{ background: 'rgba(255,255,255,0.05)', transitionDelay: `${i * 0.10}s` }}
+                >
+                  <div className="w-10 h-10 rounded-2xl bg-[var(--royal-blue-dim)] flex items-center justify-center mb-5">
+                    <Icon size={17} className="text-blue-400" />
+                  </div>
+                  <h3 className="font-display-medium text-[18px] text-white mb-3">{item.title}</h3>
+                  <p className="text-[14px] text-blue-100/70 leading-relaxed font-light">{item.desc}</p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════
+          CTA
+      ════════════════════════════════════════════════ */}
+      <section className="py-28 bg-[var(--bg)] border-t border-[var(--line)]">
+        <div ref={ctaRef} className="scroll-reveal max-w-7xl mx-auto px-6 lg:px-16">
+          <div className="bento-card p-16 lg:p-24 flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden">
+            <div className="aurora-orb-blue w-[400px] h-[400px] right-[-10%] top-[-50%] opacity-20 absolute" />
+            <div className="relative z-10">
+              <h2 className="font-display text-display text-[var(--ink)] mb-4">Ready to build?</h2>
+              <p className="text-[16px] text-[var(--muted)] font-light max-w-md leading-relaxed">
+                Join 300+ companies that ship better software with C-Oasis engineers.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 relative z-10 shrink-0">
+              <Link href="/browse">
+                <button className="px-8 py-4 rounded-full bg-[var(--ink)] text-white text-[13px] font-medium shadow-[0_4px_24px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-0.5 transition-all">
+                  Browse Gigs
+                </button>
+              </Link>
+              <Link href="/auth/register">
+                <button className="px-8 py-4 rounded-full border border-[var(--line-strong)] text-[var(--ink)] text-[13px] font-medium hover:bg-[var(--line)] hover:-translate-y-0.5 transition-all">
+                  Become a Seller
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   )
 }

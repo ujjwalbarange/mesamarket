@@ -1,46 +1,50 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { CheckCircle, XCircle, AlertCircle, X } from 'lucide-react'
-
-export type ToastType = 'success' | 'error' | 'info'
+import { CheckCircle2, AlertCircle, X } from 'lucide-react'
 
 interface ToastProps {
   message: string
-  type?: ToastType
+  type?: 'success' | 'error' | 'info'
   duration?: number
   onClose: () => void
 }
 
-const icons = { success: CheckCircle, error: XCircle, info: AlertCircle }
-const colors = {
-  success: 'bg-[var(--forest)] text-[var(--paper)]',
-  error:   'bg-[#c0392b] text-white',
-  info:    'bg-[var(--charcoal)] text-[var(--paper)]',
-}
-
-export default function Toast({ message, type = 'success', duration = 4000, onClose }: ToastProps) {
+export default function Toast({ message, type = 'info', duration = 4000, onClose }: ToastProps) {
   const [visible, setVisible] = useState(false)
-  const Icon = icons[type]
 
   useEffect(() => {
-    const show = setTimeout(() => setVisible(true), 10)
-    const hide = setTimeout(() => { setVisible(false); setTimeout(onClose, 400) }, duration)
-    return () => { clearTimeout(show); clearTimeout(hide) }
+    const show = requestAnimationFrame(() => setVisible(true))
+    const timer = setTimeout(() => {
+      setVisible(false)
+      setTimeout(onClose, 300)
+    }, duration)
+    return () => { cancelAnimationFrame(show); clearTimeout(timer) }
   }, [duration, onClose])
 
+  const icons = {
+    success: <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />,
+    error:   <AlertCircle  size={15} className="text-red-500 shrink-0" />,
+    info:    <div className="w-2 h-2 rounded-full bg-[var(--royal-blue)] shrink-0" />,
+  }
+
   return (
-    <div className={`
-      fixed bottom-8 right-8 z-[9999] flex items-center gap-3
-      px-6 py-4 text-[13px] font-[Jost] font-medium
-      transition-all duration-500 cubic-bezier(0.16, 1, 0.3, 1)
-      shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-[0.5px] border-white/20 backdrop-blur-md
-      ${colors[type]}
-      ${visible ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-4 opacity-0 scale-95'}
-    `}>
-      <div className="bg-white/10 rounded-full p-1"><Icon size={14} /></div>
-      <span className="tracking-[0.5px]">{message}</span>
-      <button onClick={() => { setVisible(false); setTimeout(onClose, 500) }} className="ml-4 opacity-50 hover:opacity-100 transition-opacity">
-        <X size={14} />
+    <div
+      className={[
+        'fixed bottom-6 right-6 z-[9999] flex items-center gap-3 px-4 py-3.5',
+        'rounded-full border shadow-[0_8px_32px_rgba(15,23,42,0.14),0_2px_8px_rgba(15,23,42,0.08)]',
+        'max-w-[340px] min-w-[240px]',
+        'bg-[var(--glass-heavy)] backdrop-blur-2xl border-[var(--glass-border)]',
+        'transition-all duration-300',
+        visible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-3 scale-95',
+      ].join(' ')}
+    >
+      {icons[type]}
+      <p className="flex-1 text-[13px] text-[var(--ink)] font-medium leading-snug">{message}</p>
+      <button
+        onClick={() => { setVisible(false); setTimeout(onClose, 300) }}
+        className="ml-1 p-0.5 rounded-full text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--line)] transition-colors"
+      >
+        <X size={13} />
       </button>
     </div>
   )
