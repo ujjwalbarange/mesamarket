@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Eye, EyeOff, Compass, ArrowRight } from 'lucide-react'
+import Image from 'next/image'
 import Toast from '@/components/ui/Toast'
 import { motion } from 'framer-motion'
 
@@ -45,10 +46,10 @@ export default function LoginPage() {
 
         {/* Logo */}
         <Link href="/" className="relative z-10 flex items-center gap-2.5 w-fit">
-          <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
-            <Compass size={16} className="text-[var(--bg)]" />
+          <div className="w-9 h-9 rounded-xl overflow-hidden border border-white/20 flex items-center justify-center">
+            <Image src="/logo.jpg" alt="OASIS Logo" width={36} height={36} className="object-cover w-full h-full" />
           </div>
-          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-[var(--bg)]">C-Oasis</span>
+          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-[var(--bg)]">OASIS</span>
         </Link>
 
         {/* Main editorial copy */}
@@ -91,10 +92,10 @@ export default function LoginPage() {
       <div className="flex flex-col items-center justify-center flex-1 lg:max-w-[480px] px-6 py-12">
         {/* Mobile logo */}
         <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-10">
-          <div className="w-8 h-8 rounded-xl bg-[var(--ink)] flex items-center justify-center">
-            <Compass size={15} className="text-[var(--bg)]" />
+          <div className="w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center shadow-md">
+            <Image src="/logo.jpg" alt="OASIS Logo" width={32} height={32} className="object-cover w-full h-full" />
           </div>
-          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-[var(--ink)]">C-Oasis</span>
+          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-[var(--ink)]">OASIS</span>
         </Link>
 
         <div className="w-full max-w-[380px]">

@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { CheckCircle, Compass, Server, ArrowRight, ArrowLeft } from 'lucide-react'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import Toast from '@/components/ui/Toast'
 
@@ -61,9 +62,9 @@ export default function RegisterPage() {
     if (!validate()) return
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch('/api/auth/send-otp', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: form.email.trim().toLowerCase(), action: 'send_otp' }),
+        body: JSON.stringify({ email: form.email.trim().toLowerCase() }),
       })
       const data = await res.json()
       if (!res.ok) { setToast({ msg: data.error ?? 'Failed to send OTP', type: 'error' }); setLoading(false); return }
@@ -82,10 +83,14 @@ export default function RegisterPage() {
       const res = await fetch('/api/auth/register', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: 'verify_register', otp,
-          email: form.email.trim().toLowerCase(), password: form.password, name: form.name,
-          role: form.isSeller ? 'SELLER' : 'BUYER',
-          sellerBio: form.bio, sellerSkills: form.skills, paymentQrBase64: qrBase64
+          otp,
+          email: form.email.trim().toLowerCase(), 
+          password: form.password, 
+          name: form.name,
+          isSeller: form.isSeller,
+          bio: form.bio, 
+          skills: form.skills, 
+          paymentQr: qrBase64
         }),
       })
       const data = await res.json()
@@ -109,10 +114,10 @@ export default function RegisterPage() {
         </div>
 
         <Link href="/" className="relative z-10 flex items-center gap-2.5 w-fit">
-          <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
-            <Compass size={16} className="text-[var(--bg)]" />
+          <div className="w-9 h-9 rounded-xl overflow-hidden border border-white/20 flex items-center justify-center">
+            <Image src="/logo.jpg" alt="OASIS Logo" width={36} height={36} className="object-cover w-full h-full" />
           </div>
-          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-[var(--bg)]">C-Oasis</span>
+          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-[var(--bg)]">OASIS</span>
         </Link>
 
         <div className="relative z-10 mt-auto max-w-md">
@@ -126,7 +131,7 @@ export default function RegisterPage() {
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="p-5 rounded-2xl bg-white/8 border border-white/12 backdrop-blur-sm">
             <p className="text-[14px] text-[var(--bg)] opacity-80 font-light leading-relaxed mb-3">
-              "Being a seller on C-Oasis helped me pay my tuition while building real-world products for actual companies."
+              "Being a seller on OASIS helped me pay my tuition while building real-world products for actual companies."
             </p>
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center text-[11px] font-semibold text-white">S</div>
@@ -142,10 +147,10 @@ export default function RegisterPage() {
       {/* ── Right panel — form ── */}
       <div className="flex flex-col items-center flex-1 lg:max-w-[540px] px-6 py-12 overflow-y-auto">
         <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-10 w-full">
-          <div className="w-8 h-8 rounded-xl bg-[var(--ink)] flex items-center justify-center">
-            <Compass size={15} className="text-[var(--bg)]" />
+          <div className="w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center shadow-md">
+            <Image src="/logo.jpg" alt="OASIS Logo" width={32} height={32} className="object-cover w-full h-full" />
           </div>
-          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-[var(--ink)]">C-Oasis</span>
+          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-[var(--ink)]">OASIS</span>
         </Link>
 
         <div className="w-full max-w-[400px] my-auto">

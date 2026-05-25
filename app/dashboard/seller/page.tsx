@@ -12,6 +12,7 @@ import Toast from '@/components/ui/Toast'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import { useAuth } from '@/lib/useAuth'
 import type { OrderStatus } from '@/types'
+import { generateGigSlug } from '@/lib/utils/slugify'
 
 type SellerGig = {
   id: string
@@ -302,7 +303,8 @@ export default function SellerDashboard() {
                         </p>
                       </div>
                       <div className="flex gap-2 shrink-0">
-                        <Link href={`/gig/${gig.id}`}><Button variant="ghost" size="sm"><Eye size={12}/></Button></Link>
+                        <Link href={`/gig/${generateGigSlug(gig.title, gig.id)}`}><Button variant="ghost" size="sm"><Eye size={12}/></Button></Link>
+                        <Link href={`/dashboard/seller/edit-gig/${gig.id}`}><Button variant="ghost" size="sm"><Edit2 size={12}/></Button></Link>
                         <Button variant="ghost" size="sm" onClick={() => setDeleteConfirm(gig.id)} className="text-[var(--danger)] hover:bg-[var(--danger)]/10">
                           <Trash2 size={12}/>
                         </Button>

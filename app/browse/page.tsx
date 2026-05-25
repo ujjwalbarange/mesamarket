@@ -8,6 +8,7 @@ import Footer from '@/components/layout/Footer'
 import GigCard from '@/components/gig/GigCard'
 import FilterSidebar from '@/components/gig/FilterSidebar'
 import type { Gig } from '@/types'
+import { generateGigSlug } from '@/lib/utils/slugify'
 
 interface Filters {
   category: string
@@ -234,7 +235,7 @@ function BrowseInner() {
                 {gigs.map((gig, i) => (
                   <motion.a
                     key={gig.id}
-                    href={`/gig/${gig.id}`}
+                    href={`/gig/${generateGigSlug(gig.title, gig.id)}`}
                     initial={{ opacity: 0, x: -12 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4, delay: Math.min(i * 0.04, 0.3), ease: [0.16, 1, 0.3, 1] }}

@@ -17,7 +17,7 @@ export async function sendTransactionalEmail({ to, subject, html, text }: EmailO
 
     // Lazy initialization — avoids "Missing API key" crash at build time
     const resend = new Resend(apiKey)
-    const from = process.env.EMAIL_FROM || 'Craftsmanship Oasis <onboarding@resend.dev>'
+    const from = process.env.EMAIL_FROM || 'OASIS <onboarding@resend.dev>'
     const { data, error } = await resend.emails.send({
       from,
       to,

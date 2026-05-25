@@ -8,9 +8,11 @@ import Footer from '@/components/layout/Footer'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import type { Gig } from '@/types'
+import { extractIdFromSlug } from '@/lib/utils/slugify'
 
-export default function GigPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default function GigPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params)
+  const id = extractIdFromSlug(slug)
   const [gig, setGig]             = useState<Gig | null>(null)
   const [loading, setLoading]     = useState(true)
   const [activePkg, setActivePkg] = useState<'basic' | 'standard' | 'premium'>('standard')
@@ -160,6 +162,26 @@ export default function GigPage({ params }: { params: Promise<{ id: string }> })
                   ))}
                 </div>
               </div>
+
+              {/* FAQ Section (SEO Enhancement) */}
+              <div className="mb-12 border-t border-[var(--line)] pt-12">
+                <h2 className="font-display text-[24px] text-[var(--ink)] mb-6">Frequently Asked Questions</h2>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-[15px] font-semibold text-[var(--ink)] mb-2">What happens after I purchase this gig?</h3>
+                    <p className="text-[14px] text-[var(--muted)] font-light leading-relaxed">Your payment is held securely in the OASIS escrow system. The developer will begin working on your project and keep you updated. Funds are only released when you approve the final delivery.</p>
+                  </div>
+                  <div>
+                    <h3 className="text-[15px] font-semibold text-[var(--ink)] mb-2">What is included in the revisions?</h3>
+                    <p className="text-[14px] text-[var(--muted)] font-light leading-relaxed">Revisions cover minor adjustments and bug fixes to ensure the final product meets the initial requirements. Major feature additions may require a custom offer.</p>
+                  </div>
+                  <div>
+                    <h3 className="text-[15px] font-semibold text-[var(--ink)] mb-2">Are the developers verified?</h3>
+                    <p className="text-[14px] text-[var(--muted)] font-light leading-relaxed">Yes. OASIS by MESA strictly verifies every student developer's university credentials, technical skills, and portfolio before they are approved to sell services on the platform.</p>
+                  </div>
+                </div>
+              </div>
+
             </motion.div>
           </div>
 
@@ -226,6 +248,37 @@ export default function GigPage({ params }: { params: Promise<{ id: string }> })
       </div>
 
       <Footer />
+
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "serviceType": gig.category,
+            "provider": {
+              "@type": "Person",
+              "name": gig.seller?.name ?? 'OASIS Seller'
+            },
+            "name": gig.title,
+            "description": gig.description,
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "INR",
+              "price": gig.basicPrice,
+              "url": `https://oasis.mesapos.in/gig/${slug}`
+            },
+            ...(gig.rating > 0 ? {
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": gig.rating,
+                "reviewCount": gig.totalOrders ?? 1
+              }
+            } : {})
+          })
+        }}
+      />
     </div>
   )
 }

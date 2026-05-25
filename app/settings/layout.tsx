@@ -1,4 +1,9 @@
 import { ReactNode } from 'react'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Account Settings & Profile Management | OASIS',
+}
 import Navbar from '@/components/layout/Navbar'
 
 export default function SettingsLayout({ children }: { children: ReactNode }) {

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Compass } from 'lucide-react'
 
 const cols = {
@@ -32,10 +33,10 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2.5 mb-5 group">
-              <div className="w-9 h-9 rounded-xl bg-[var(--ink)] flex items-center justify-center shadow-[0_4px_12px_rgba(15,23,42,0.20)] group-hover:scale-105 transition-transform">
-                <Compass size={16} className="text-[var(--bg)]" />
+              <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center shadow-[0_4px_12px_rgba(15,23,42,0.20)] group-hover:scale-105 transition-transform">
+                <Image src="/logo.jpg" alt="OASIS Logo" width={36} height={36} className="object-cover w-full h-full" />
               </div>
-              <span className="font-display-medium text-[14px] tracking-[3px] uppercase text-[var(--ink)]">C-Oasis</span>
+              <span className="font-display-medium text-[14px] tracking-[3px] uppercase text-[var(--ink)]">OASIS</span>
             </Link>
             <p className="text-[13px] text-[var(--muted)] leading-relaxed max-w-[200px]">
               The boutique marketplace where vetted CS engineers build for forward-thinking brands.
@@ -71,7 +72,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-[var(--line)]">
           <p className="text-[12px] text-[var(--muted-light)]">
-            © {new Date().getFullYear()} Craftsmanship Oasis. Escrow-verified.
+            © {new Date().getFullYear()} OASIS by MESA. Escrow-verified.
           </p>
           <div className="flex items-center gap-6">
             {['Privacy', 'Terms', 'Support'].map(l => (

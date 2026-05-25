@@ -3,12 +3,13 @@ import Link from 'next/link'
 import { Star, Clock, ArrowUpRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import type { Gig } from '@/types'
+import { generateGigSlug } from '@/lib/utils/slugify'
 
 export default function GigCard({ gig }: { gig: Gig }) {
   const tags = gig.techStack.split(',').map(s => s.trim()).filter(Boolean).slice(0, 3)
 
   return (
-    <Link href={`/gig/${gig.id}`} className="group block h-full">
+    <Link href={`/gig/${generateGigSlug(gig.title, gig.id)}`} className="group block h-full">
       <motion.article
         className="h-full flex flex-col bg-[var(--surface)] border border-[var(--line)] rounded-[28px] overflow-hidden transition-all duration-300 hover:border-[var(--line-strong)] cursor-pointer"
         style={{ boxShadow: 'var(--shadow-card)' }}

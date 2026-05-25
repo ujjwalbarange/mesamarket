@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
 
     const emailResult = await sendTransactionalEmail({
       to: email,
-      subject: 'Your Craftsmanship Oasis verification code',
+      subject: 'Your OASIS by MESA verification code',
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1a1916;">
           <h2 style="margin: 0 0 12px;">Verify your email</h2>

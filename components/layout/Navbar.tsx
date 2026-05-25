@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Search, Menu, X, LogOut, Settings, Sun, Moon, Monitor, Compass } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import { useSimpleAuth } from '@/lib/useSimpleAuth'
@@ -68,13 +69,13 @@ export default function Navbar() {
 
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 shrink-0 group mr-2">
-              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300
-                ${scrolled ? 'bg-[var(--ink)] shadow-[0_4px_12px_rgba(15,23,42,0.20)]' : 'bg-[var(--ink)] shadow-[0_4px_20px_rgba(15,23,42,0.25)]'}
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300 overflow-hidden
+                ${scrolled ? 'shadow-[0_4px_12px_rgba(15,23,42,0.20)]' : 'shadow-[0_4px_20px_rgba(15,23,42,0.25)]'}
                 group-hover:scale-105`}>
-                <Compass size={15} className="text-[var(--bg)]" />
+                <Image src="/logo.jpg" alt="OASIS Logo" width={32} height={32} className="object-cover w-full h-full" priority />
               </div>
               <span className="font-display-medium text-[14px] tracking-[3px] uppercase text-[var(--ink)] hidden sm:block">
-                C-Oasis
+                OASIS
               </span>
             </Link>
 
@@ -186,10 +187,10 @@ export default function Navbar() {
             {/* Mobile header */}
             <div className="flex items-center justify-between px-6 h-[68px] border-b border-[var(--line)]">
               <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[var(--ink)] flex items-center justify-center">
-                  <Compass size={15} className="text-[var(--bg)]" />
+                <div className="w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center">
+                  <Image src="/logo.jpg" alt="OASIS Logo" width={32} height={32} className="object-cover w-full h-full" />
                 </div>
-                <span className="font-display-medium text-[14px] tracking-[3px] uppercase text-[var(--ink)]">C-Oasis</span>
+                <span className="font-display-medium text-[14px] tracking-[3px] uppercase text-[var(--ink)]">OASIS</span>
               </Link>
               <button
                 onClick={() => setMenuOpen(false)}
