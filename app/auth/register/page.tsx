@@ -110,29 +110,29 @@ export default function RegisterPage() {
 
         <Link href="/" className="relative z-10 flex items-center gap-2.5 w-fit">
           <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
-            <Compass size={16} className="text-white" />
+            <Compass size={16} className="text-[var(--bg)]" />
           </div>
-          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-white">C-Oasis</span>
+          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-[var(--bg)]">C-Oasis</span>
         </Link>
 
         <div className="relative z-10 mt-auto max-w-md">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>
-            <h1 className="font-display text-[64px] leading-[0.95] text-white mb-6">
+            <h1 className="font-display text-[64px] leading-[0.95] text-[var(--bg)] mb-6">
               Build your<br />future.
             </h1>
-            <p className="text-[16px] text-white/60 leading-relaxed font-light mb-10">
+            <p className="text-[16px] text-[var(--bg)] opacity-60 leading-relaxed font-light mb-10">
               Join the marketplace where vetted engineers and forward-thinking brands connect to build incredible software.
             </p>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="p-5 rounded-2xl bg-white/8 border border-white/12 backdrop-blur-sm">
-            <p className="text-[14px] text-white/80 font-light leading-relaxed mb-3">
+            <p className="text-[14px] text-[var(--bg)] opacity-80 font-light leading-relaxed mb-3">
               "Being a seller on C-Oasis helped me pay my tuition while building real-world products for actual companies."
             </p>
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center text-[11px] font-semibold text-white">S</div>
               <div>
-                <div className="text-[12px] font-medium text-white">Sanya K.</div>
-                <div className="text-[10px] text-white/50">Pro Seller · CS Senior</div>
+                <div className="text-[12px] font-medium text-[var(--bg)]">Sanya K.</div>
+                <div className="text-[10px] text-[var(--bg)] opacity-50">Pro Seller · CS Senior</div>
               </div>
             </div>
           </motion.div>
@@ -143,7 +143,7 @@ export default function RegisterPage() {
       <div className="flex flex-col items-center flex-1 lg:max-w-[540px] px-6 py-12 overflow-y-auto">
         <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-10 w-full">
           <div className="w-8 h-8 rounded-xl bg-[var(--ink)] flex items-center justify-center">
-            <Compass size={15} className="text-white" />
+            <Compass size={15} className="text-[var(--bg)]" />
           </div>
           <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-[var(--ink)]">C-Oasis</span>
         </Link>
@@ -246,7 +246,7 @@ export default function RegisterPage() {
                   )}
 
                   <button type="submit" disabled={loading}
-                    className="w-full py-4 mt-4 rounded-full bg-[var(--ink)] text-white text-[13px] font-semibold flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-px transition-all disabled:opacity-50">
+                    className="w-full py-4 mt-4 rounded-full bg-[var(--ink)] text-[var(--bg)] text-[13px] font-semibold flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-px transition-all disabled:opacity-50">
                     {loading ? 'Sending Code...' : <><span>Continue</span><ArrowRight size={14} /></>}
                   </button>
                 </form>
@@ -270,7 +270,7 @@ export default function RegisterPage() {
                     <ArrowLeft size={14} /> Back
                   </button>
                   <button type="submit" disabled={loading}
-                    className="flex-1 py-4 rounded-full bg-[var(--ink)] text-white text-[13px] font-semibold shadow-[0_4px_20px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-px transition-all disabled:opacity-50">
+                    className="flex-1 py-4 rounded-full bg-[var(--ink)] text-[var(--bg)] text-[13px] font-semibold shadow-[0_4px_20px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-px transition-all disabled:opacity-50">
                     {loading ? 'Verifying...' : 'Complete Registration'}
                   </button>
                 </div>

@@ -47,7 +47,7 @@ export default function GigCard({ gig }: { gig: Gig }) {
         <div className="flex flex-col flex-1 p-5 pt-4">
           {/* Seller */}
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-6 h-6 rounded-full bg-[var(--ink)] flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+            <div className="w-6 h-6 rounded-full bg-[var(--ink)] flex items-center justify-center text-[10px] font-bold text-[var(--bg)] shrink-0">
               {gig.seller?.name?.charAt(0)?.toUpperCase() ?? 'S'}
             </div>
             <span className="text-[12px] text-[var(--muted)] truncate">{gig.seller?.name ?? 'Seller'}</span>

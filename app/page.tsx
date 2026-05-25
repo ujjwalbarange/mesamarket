@@ -76,7 +76,7 @@ export default function HomePage() {
         <div className="aurora-orb-blue w-[700px] h-[700px] top-[-15%] right-[-10%] opacity-60" />
         <div className="aurora-orb-cyan w-[500px] h-[500px] bottom-[-10%] left-[-8%] opacity-50" />
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-16 py-20 lg:py-32">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-16 py-12 md:py-20 lg:py-32">
           <motion.div style={{ y: heroY }}>
             <div className="max-w-4xl">
               {/* Pill label */}
@@ -138,7 +138,7 @@ export default function HomePage() {
                       className="w-full pl-11 pr-4 py-3.5 rounded-full text-[14px] bg-[var(--surface)] border border-[var(--line-strong)] text-[var(--ink)] placeholder:text-[var(--muted-light)] outline-none focus:border-[var(--royal-blue)] focus:ring-2 focus:ring-[var(--royal-blue-dim)] shadow-[var(--shadow-sm)] transition-all"
                     />
                   </div>
-                  <button type="submit" className="px-6 py-3.5 rounded-full bg-[var(--ink)] text-white text-[13px] font-medium shadow-[0_4px_20px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-px transition-all">
+                  <button type="submit" className="px-6 py-3.5 rounded-full bg-[var(--ink)] text-[var(--bg)] text-[13px] font-medium shadow-[0_4px_20px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-px transition-all">
                     Search
                   </button>
                 </form>
@@ -152,12 +152,12 @@ export default function HomePage() {
                 className="flex flex-wrap items-center gap-4"
               >
                 <Link href="/browse">
-                  <button className="flex items-center gap-2 px-7 py-3.5 rounded-full bg-[var(--ink)] text-white text-[13px] font-medium shadow-[0_4px_24px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:shadow-[0_8px_32px_rgba(15,23,42,0.32)] hover:-translate-y-0.5 transition-all duration-300">
+                  <button className="flex items-center justify-center gap-2 w-full md:w-auto px-7 py-3.5 rounded-full bg-[var(--ink)] text-[var(--bg)] text-[13px] font-medium shadow-[0_4px_24px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:shadow-[0_8px_32px_rgba(15,23,42,0.32)] hover:-translate-y-0.5 transition-all duration-300">
                     Browse Marketplace <ArrowRight size={14} />
                   </button>
                 </Link>
                 <Link href="/auth/register">
-                  <button className="flex items-center gap-2 px-7 py-3.5 rounded-full bg-[var(--glass)] backdrop-blur-md border border-[var(--glass-border)] text-[var(--ink)] text-[13px] font-medium shadow-[var(--shadow-sm)] hover:bg-[var(--glass-heavy)] hover:-translate-y-0.5 transition-all duration-300">
+                  <button className="flex items-center justify-center gap-2 w-full md:w-auto px-7 py-3.5 rounded-full bg-[var(--glass)] backdrop-blur-md border border-[var(--glass-border)] text-[var(--ink)] text-[13px] font-medium shadow-[var(--shadow-sm)] hover:bg-[var(--glass-heavy)] hover:-translate-y-0.5 transition-all duration-300">
                     Sell Your Skills
                   </button>
                 </Link>
@@ -196,7 +196,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════════════════
           CATEGORIES
       ════════════════════════════════════════════════ */}
-      <section className="bg-[var(--bg)] relative z-10 border-t border-[var(--line)] py-20">
+      <section className="bg-[var(--bg)] relative z-10 border-t border-[var(--line)] py-14 md:py-20">
         <div ref={catRef} className="scroll-reveal max-w-7xl mx-auto px-6 lg:px-16">
           <div className="flex items-end justify-between mb-12">
             <div>
@@ -230,7 +230,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════════════════
           HOW IT WORKS — editorial floating numbers
       ════════════════════════════════════════════════ */}
-      <section id="how-it-works" className="py-28 bg-[var(--bg)] relative overflow-hidden">
+      <section id="how-it-works" className="py-16 md:py-28 bg-[var(--bg)] relative overflow-hidden">
         <div className="aurora-orb-blue w-[400px] h-[400px] right-[-10%] top-[10%] opacity-20 absolute" />
         <div ref={howRef} className="scroll-reveal max-w-7xl mx-auto px-6 lg:px-16 relative z-10">
           <div className="mb-16">
@@ -261,7 +261,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════════════════
           POPULAR GIGS
       ════════════════════════════════════════════════ */}
-      <section className="py-28 bg-[var(--bg-secondary)] border-t border-[var(--line)]">
+      <section className="py-16 md:py-28 bg-[var(--bg-secondary)] border-t border-[var(--line)]">
         <div ref={gigsRef} className="scroll-reveal max-w-7xl mx-auto px-6 lg:px-16">
           <div className="flex items-end justify-between mb-12">
             <div>
@@ -306,7 +306,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════════════════
           TRUST
       ════════════════════════════════════════════════ */}
-      <section id="trust" className="section-dark py-28">
+      <section id="trust" className="section-dark py-16 md:py-28">
         <div ref={trustRef} className="scroll-reveal max-w-7xl mx-auto px-6 lg:px-16">
           <div className="mb-16">
             <p className="text-[11px] uppercase tracking-[2.5px] text-blue-400 font-semibold mb-3">Why C-Oasis</p>
@@ -336,7 +336,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════════════════
           CTA
       ════════════════════════════════════════════════ */}
-      <section className="py-28 bg-[var(--bg)] border-t border-[var(--line)]">
+      <section className="py-16 md:py-28 bg-[var(--bg)] border-t border-[var(--line)]">
         <div ref={ctaRef} className="scroll-reveal max-w-7xl mx-auto px-6 lg:px-16">
           <div className="bento-card p-16 lg:p-24 flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden">
             <div className="aurora-orb-blue w-[400px] h-[400px] right-[-10%] top-[-50%] opacity-20 absolute" />
@@ -348,12 +348,12 @@ export default function HomePage() {
             </div>
             <div className="flex flex-col sm:flex-row gap-4 relative z-10 shrink-0">
               <Link href="/browse">
-                <button className="px-8 py-4 rounded-full bg-[var(--ink)] text-white text-[13px] font-medium shadow-[0_4px_24px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-0.5 transition-all">
+                <button className="w-full sm:w-auto px-8 py-4 rounded-full bg-[var(--ink)] text-[var(--bg)] text-[13px] font-medium shadow-[0_4px_24px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-0.5 transition-all">
                   Browse Gigs
                 </button>
               </Link>
               <Link href="/auth/register">
-                <button className="px-8 py-4 rounded-full border border-[var(--line-strong)] text-[var(--ink)] text-[13px] font-medium hover:bg-[var(--line)] hover:-translate-y-0.5 transition-all">
+                <button className="w-full sm:w-auto px-8 py-4 rounded-full border border-[var(--line-strong)] text-[var(--ink)] text-[13px] font-medium hover:bg-[var(--line)] hover:-translate-y-0.5 transition-all">
                   Become a Seller
                 </button>
               </Link>

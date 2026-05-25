@@ -71,7 +71,7 @@ export default function Navbar() {
               <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300
                 ${scrolled ? 'bg-[var(--ink)] shadow-[0_4px_12px_rgba(15,23,42,0.20)]' : 'bg-[var(--ink)] shadow-[0_4px_20px_rgba(15,23,42,0.25)]'}
                 group-hover:scale-105`}>
-                <Compass size={15} className="text-white" />
+                <Compass size={15} className="text-[var(--bg)]" />
               </div>
               <span className="font-display-medium text-[14px] tracking-[3px] uppercase text-[var(--ink)] hidden sm:block">
                 C-Oasis
@@ -142,7 +142,7 @@ export default function Navbar() {
                     </button>
                   </Link>
                   <Link href="/auth/register">
-                    <button className="px-4 py-2 rounded-full text-[12px] font-medium bg-[var(--ink)] text-white shadow-[0_2px_12px_rgba(15,23,42,0.22)] hover:bg-[var(--ink-soft)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.28)] transition-all hover:-translate-y-px">
+                    <button className="px-4 py-2 rounded-full text-[12px] font-medium bg-[var(--ink)] text-[var(--bg)] shadow-[0_2px_12px_rgba(15,23,42,0.22)] hover:bg-[var(--ink-soft)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.28)] transition-all hover:-translate-y-px">
                       Join Free
                     </button>
                   </Link>
@@ -152,7 +152,7 @@ export default function Navbar() {
               {/* User avatar */}
               {user && (
                 <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 rounded-full bg-[var(--ink)] text-white flex items-center justify-center text-[13px] font-semibold shadow-[0_2px_8px_rgba(15,23,42,0.20)]">
+                  <div className="w-9 h-9 rounded-full bg-[var(--ink)] text-[var(--bg)] flex items-center justify-center text-[13px] font-semibold shadow-[0_2px_8px_rgba(15,23,42,0.20)]">
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                   <button
@@ -187,7 +187,7 @@ export default function Navbar() {
             <div className="flex items-center justify-between px-6 h-[68px] border-b border-[var(--line)]">
               <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-[var(--ink)] flex items-center justify-center">
-                  <Compass size={15} className="text-white" />
+                  <Compass size={15} className="text-[var(--bg)]" />
                 </div>
                 <span className="font-display-medium text-[14px] tracking-[3px] uppercase text-[var(--ink)]">C-Oasis</span>
               </Link>
@@ -243,7 +243,7 @@ export default function Navbar() {
                       onClick={() => setTheme(t)}
                       className={`flex-1 py-2.5 rounded-full text-[11px] font-medium capitalize border transition-all ${
                         mounted && theme === t
-                          ? 'bg-[var(--ink)] text-white border-transparent shadow-[0_2px_8px_rgba(15,23,42,0.20)]'
+                          ? 'bg-[var(--ink)] text-[var(--bg)] border-transparent shadow-[0_2px_8px_rgba(15,23,42,0.20)]'
                           : 'bg-transparent text-[var(--muted)] border-[var(--line-strong)] hover:border-[var(--ink)]'
                       }`}
                     >
@@ -260,7 +260,7 @@ export default function Navbar() {
                     <button className="w-full py-3 rounded-full text-[13px] font-medium border border-[var(--line-strong)] text-[var(--ink)] hover:bg-[var(--line)] transition-all">Sign In</button>
                   </Link>
                   <Link href="/auth/register" className="flex-1" onClick={() => setMenuOpen(false)}>
-                    <button className="w-full py-3 rounded-full text-[13px] font-medium bg-[var(--ink)] text-white shadow-[0_2px_12px_rgba(15,23,42,0.25)] hover:-translate-y-px transition-all">Join Free</button>
+                    <button className="w-full py-3 rounded-full text-[13px] font-medium bg-[var(--ink)] text-[var(--bg)] shadow-[0_2px_12px_rgba(15,23,42,0.25)] hover:-translate-y-px transition-all">Join Free</button>
                   </Link>
                 </div>
               )}

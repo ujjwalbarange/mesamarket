@@ -30,7 +30,8 @@ export default function Toast({ message, type = 'info', duration = 4000, onClose
   return (
     <div
       className={[
-        'fixed bottom-6 right-6 z-[9999] flex items-center gap-3 px-4 py-3.5',
+        'fixed z-[9999] flex items-center gap-3 px-4 py-3.5',
+        'bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-6',
         'rounded-full border shadow-[0_8px_32px_rgba(15,23,42,0.14),0_2px_8px_rgba(15,23,42,0.08)]',
         'max-w-[340px] min-w-[240px]',
         'bg-[var(--glass-heavy)] backdrop-blur-2xl border-[var(--glass-border)]',

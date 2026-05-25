@@ -158,9 +158,9 @@ body {
 }
 
 /* Hero scaling */
-.text-hero { font-size: clamp(48px, 8vw, 96px); line-height: 0.96; letter-spacing: -0.03em; }
-.text-display { font-size: clamp(36px, 5vw, 64px); line-height: 1.0; letter-spacing: -0.025em; }
-.text-editorial { font-size: clamp(28px, 3.5vw, 44px); line-height: 1.05; letter-spacing: -0.02em; }
+.text-hero { font-size: clamp(40px, 8vw, 96px); line-height: 0.96; letter-spacing: -0.03em; }
+.text-display { font-size: clamp(32px, 6vw, 64px); line-height: 1.0; letter-spacing: -0.025em; }
+.text-editorial { font-size: clamp(28px, 4vw, 44px); line-height: 1.05; letter-spacing: -0.02em; }
 
 /* ═══════════════════════════════════════════════════════════════════
    AURORA BACKGROUND SYSTEM

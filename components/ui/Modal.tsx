@@ -41,7 +41,7 @@ export default function Modal({ isOpen, onClose, title, size = 'md', children }:
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 8 }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full ${sizes[size]} bg-[var(--glass-heavy)] backdrop-blur-2xl border border-[var(--glass-border)] rounded-[28px] shadow-[0_32px_80px_rgba(15,23,42,0.18),0_8px_24px_rgba(15,23,42,0.12)] p-8`}
+            className={`relative w-full ${sizes[size]} bg-[var(--glass-heavy)] backdrop-blur-2xl border border-[var(--glass-border)] rounded-[24px] md:rounded-[28px] shadow-[0_32px_80px_rgba(15,23,42,0.18),0_8px_24px_rgba(15,23,42,0.12)] p-6 md:p-8`}
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-6">

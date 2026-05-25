@@ -33,7 +33,7 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2.5 mb-5 group">
               <div className="w-9 h-9 rounded-xl bg-[var(--ink)] flex items-center justify-center shadow-[0_4px_12px_rgba(15,23,42,0.20)] group-hover:scale-105 transition-transform">
-                <Compass size={16} className="text-white" />
+                <Compass size={16} className="text-[var(--bg)]" />
               </div>
               <span className="font-display-medium text-[14px] tracking-[3px] uppercase text-[var(--ink)]">C-Oasis</span>
             </Link>

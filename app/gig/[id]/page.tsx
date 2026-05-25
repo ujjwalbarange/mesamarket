@@ -52,7 +52,7 @@ export default function GigPage({ params }: { params: Promise<{ id: string }> })
   if (!gig) return (
     <div className="aurora-page min-h-screen">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-8 py-40 text-center">
+      <div className="max-w-7xl mx-auto px-8 py-24 md:py-40 text-center">
         <div className="font-display text-[80px] text-[var(--line-strong)] leading-none mb-6 select-none">404</div>
         <h1 className="font-display-medium text-[24px] text-[var(--ink)] mb-4">Gig Not Found</h1>
         <Link href="/browse" className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--muted)] hover:text-[var(--ink)] transition-colors">
@@ -73,7 +73,7 @@ export default function GigPage({ params }: { params: Promise<{ id: string }> })
     <div className="aurora-page min-h-screen">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-16 pt-28 pb-20">
+      <div className="max-w-7xl mx-auto px-6 lg:px-16 pt-20 md:pt-28 pb-12 md:pb-20">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-[12px] text-[var(--muted)] mb-10">
           <Link href="/browse" className="flex items-center gap-1.5 hover:text-[var(--ink)] transition-colors">
@@ -93,7 +93,7 @@ export default function GigPage({ params }: { params: Promise<{ id: string }> })
 
               {/* Seller strip */}
               <div className="flex items-center gap-4 mb-10 pb-10 border-b border-[var(--line)]">
-                <div className="w-12 h-12 rounded-2xl bg-[var(--ink)] flex items-center justify-center text-white font-display-bold text-lg">
+                <div className="w-12 h-12 rounded-2xl bg-[var(--ink)] flex items-center justify-center text-[var(--bg)] font-display-bold text-lg">
                   {gig.seller?.name?.charAt(0) ?? 'S'}
                 </div>
                 <div>
@@ -179,7 +179,7 @@ export default function GigPage({ params }: { params: Promise<{ id: string }> })
                     <button key={k} onClick={() => setActivePkg(k)}
                       className={`flex-1 py-3.5 text-[11px] font-semibold capitalize tracking-wide transition-all ${
                         activePkg === k
-                          ? 'bg-[var(--ink)] text-white'
+                          ? 'bg-[var(--ink)] text-[var(--bg)]'
                           : 'text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--bg-secondary)]'
                       }`}
                     >{k}</button>

@@ -46,9 +46,9 @@ export default function LoginPage() {
         {/* Logo */}
         <Link href="/" className="relative z-10 flex items-center gap-2.5 w-fit">
           <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
-            <Compass size={16} className="text-white" />
+            <Compass size={16} className="text-[var(--bg)]" />
           </div>
-          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-white">C-Oasis</span>
+          <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-[var(--bg)]">C-Oasis</span>
         </Link>
 
         {/* Main editorial copy */}
@@ -58,10 +58,10 @@ export default function LoginPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <h1 className="font-display text-[64px] leading-[0.95] text-white mb-6">
+            <h1 className="font-display text-[64px] leading-[0.95] text-[var(--bg)] mb-6">
               Welcome<br />back.
             </h1>
-            <p className="text-[16px] text-white/60 leading-relaxed font-light mb-10">
+            <p className="text-[16px] text-[var(--bg)] opacity-60 leading-relaxed font-light mb-10">
               Your projects, orders, and vetted developer network — all in one place.
             </p>
           </motion.div>
@@ -72,14 +72,14 @@ export default function LoginPage() {
             transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="p-5 rounded-2xl bg-white/8 border border-white/12 backdrop-blur-sm"
           >
-            <p className="text-[14px] text-white/80 font-light leading-relaxed mb-3">
+            <p className="text-[14px] text-[var(--bg)] opacity-80 font-light leading-relaxed mb-3">
               "Shipped our MVP in 3 weeks. The escrow system gave us total confidence."
             </p>
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-full bg-blue-400 flex items-center justify-center text-[11px] font-semibold text-white">A</div>
               <div>
-                <div className="text-[12px] font-medium text-white">Arjun M.</div>
-                <div className="text-[10px] text-white/50">Startup Founder</div>
+                <div className="text-[12px] font-medium text-[var(--bg)]">Arjun M.</div>
+                <div className="text-[10px] text-[var(--bg)] opacity-50">Startup Founder</div>
               </div>
               <div className="ml-auto text-amber-400 text-[12px]">★★★★★</div>
             </div>
@@ -92,7 +92,7 @@ export default function LoginPage() {
         {/* Mobile logo */}
         <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-10">
           <div className="w-8 h-8 rounded-xl bg-[var(--ink)] flex items-center justify-center">
-            <Compass size={15} className="text-white" />
+            <Compass size={15} className="text-[var(--bg)]" />
           </div>
           <span className="font-display-medium text-[13px] tracking-[3px] uppercase text-[var(--ink)]">C-Oasis</span>
         </Link>
@@ -150,7 +150,7 @@ export default function LoginPage() {
               </div>
 
               <button type="submit" disabled={loading}
-                className="w-full py-4 rounded-full bg-[var(--ink)] text-white text-[13px] font-semibold flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-px transition-all disabled:opacity-50 mt-2">
+                className="w-full py-4 rounded-full bg-[var(--ink)] text-[var(--bg)] text-[13px] font-semibold flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(15,23,42,0.25)] hover:bg-[var(--ink-soft)] hover:-translate-y-px transition-all disabled:opacity-50 mt-2">
                 {loading ? 'Signing in...' : <><span>Sign In</span><ArrowRight size={14} /></>}
               </button>
             </form>

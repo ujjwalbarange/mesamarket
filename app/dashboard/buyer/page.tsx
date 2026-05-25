@@ -86,7 +86,7 @@ export default function BuyerDashboard() {
       <Navbar />
       {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)}/>}
 
-      <div className="max-w-6xl mx-auto px-6 lg:px-12 pt-28 pb-20">
+      <div className="max-w-6xl mx-auto px-6 lg:px-12 pt-24 md:pt-28 pb-12 md:pb-20">
         {/* Header */}
         <div className="flex items-end justify-between mb-14">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16,1,0.3,1] }}>
@@ -104,7 +104,7 @@ export default function BuyerDashboard() {
         </div>
 
         {/* Floating stats — no boxes */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14 pb-14 border-b border-[var(--line)]">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 mb-14 pb-14 border-b border-[var(--line)]">
           {[
             { label: 'Active Orders',   val: active.length,    icon: <Clock size={14}/> },
             { label: 'Completed',       val: completed.length, icon: <CheckCircle size={14}/> },
@@ -129,7 +129,7 @@ export default function BuyerDashboard() {
             <button key={tab.key} onClick={() => setActiveTab(tab.key as 'active' | 'completed')}
               className={`px-5 py-2.5 rounded-full text-[12px] font-semibold transition-all ${
                 activeTab === tab.key
-                  ? 'bg-[var(--ink)] text-white shadow-[0_2px_12px_rgba(15,23,42,0.20)]'
+                  ? 'bg-[var(--ink)] text-[var(--bg)] shadow-[0_2px_12px_rgba(15,23,42,0.20)]'
                   : 'bg-transparent text-[var(--muted)] border border-[var(--line-strong)] hover:border-[var(--ink)] hover:text-[var(--ink)]'
               }`}
             >{tab.label}</button>

@@ -88,7 +88,7 @@ function BrowseInner() {
 
       {/* ── Page header ── */}
       <div className="pt-[68px] border-b border-[var(--line)] bg-[var(--bg)]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-16 py-14 lg:py-20">
+        <div className="max-w-7xl mx-auto px-6 lg:px-16 py-10 md:py-14 lg:py-20">
           <div className="aurora-orb-blue w-[500px] h-[500px] absolute right-0 top-0 opacity-25 pointer-events-none" style={{ position: 'absolute' }} />
           <motion.div
             initial={{ opacity: 0, y: 18 }}
@@ -145,13 +145,13 @@ function BrowseInner() {
             <div className="flex border border-[var(--line-strong)] rounded-full overflow-hidden">
               <button
                 onClick={() => setView('grid')}
-                className={`p-2.5 transition-colors ${view === 'grid' ? 'bg-[var(--ink)] text-white' : 'text-[var(--muted)] hover:text-[var(--ink)]'}`}
+                className={`p-2.5 transition-colors ${view === 'grid' ? 'bg-[var(--ink)] text-[var(--bg)]' : 'text-[var(--muted)] hover:text-[var(--ink)]'}`}
               >
                 <Grid3X3 size={13} />
               </button>
               <button
                 onClick={() => setView('list')}
-                className={`p-2.5 border-l border-[var(--line-strong)] transition-colors ${view === 'list' ? 'bg-[var(--ink)] text-white' : 'text-[var(--muted)] hover:text-[var(--ink)]'}`}
+                className={`p-2.5 border-l border-[var(--line-strong)] transition-colors ${view === 'list' ? 'bg-[var(--ink)] text-[var(--bg)]' : 'text-[var(--muted)] hover:text-[var(--ink)]'}`}
               >
                 <List size={13} />
               </button>
@@ -161,7 +161,7 @@ function BrowseInner() {
       </div>
 
       {/* ── Main content ── */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-16 py-10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-16 py-6 md:py-10">
         <div className="flex gap-10">
 
           {/* Sidebar — desktop */}
