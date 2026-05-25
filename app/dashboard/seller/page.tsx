@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { TrendingUp, Package, Plus, Upload, CheckCircle, Eye, RefreshCw, Trash2 } from 'lucide-react'
+import { TrendingUp, Package, Plus, Upload, CheckCircle, Eye, RefreshCw, Trash2, Edit2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Navbar from '@/components/layout/Navbar'
 import Button from '@/components/ui/Button'
