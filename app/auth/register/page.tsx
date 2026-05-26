@@ -50,7 +50,20 @@ export default function RegisterPage() {
     const e: FormErrors = {}
     if (form.name.length < 2) e.name = 'Full name required'
     if (!form.email.includes('@')) e.email = 'Valid email required'
-    if (form.password.length < 8) e.password = 'Min. 8 characters'
+    
+    // Strict password validation
+    if (form.password.length < 8) {
+      e.password = 'Min. 8 characters'
+    } else if (!/[A-Z]/.test(form.password)) {
+      e.password = 'Must contain at least one uppercase letter'
+    } else if (!/[a-z]/.test(form.password)) {
+      e.password = 'Must contain at least one lowercase letter'
+    } else if (!/[0-9]/.test(form.password)) {
+      e.password = 'Must contain at least one number'
+    } else if (!/[^A-Za-z0-9]/.test(form.password)) {
+      e.password = 'Must contain at least one special character'
+    }
+
     if (form.password !== form.confirm) e.confirm = 'Passwords must match'
     if (form.isSeller && !form.paymentQr) e.paymentQr = 'Payment QR required'
     setErrors(e)
@@ -202,6 +215,7 @@ export default function RegisterPage() {
                   <div>
                     <label className="block text-[11px] uppercase tracking-[2px] text-[var(--muted)] font-semibold mb-2">Password</label>
                     <input type="password" required className="input-field" placeholder="••••••••••••" value={form.password} onChange={e => setField('password', e.target.value)} />
+                    {errors.password && <p className="text-[11px] text-red-500 mt-1.5">{errors.password}</p>}
                     {form.password && (
                       <div className="mt-2.5">
                         <div className="flex justify-between text-[10px] font-medium mb-1">

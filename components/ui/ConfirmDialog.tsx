@@ -26,8 +26,8 @@ export default function ConfirmDialog({
         <div className={`w-12 h-12 flex items-center justify-center mx-auto mb-5 border-2 ${variant === 'danger' ? 'border-[#c0392b] text-[#c0392b]' : 'border-[var(--forest)] text-[var(--forest)]'}`}>
           <AlertCircle size={24} />
         </div>
-        <h3 className="font-display text-2xl font-light text-[var(--charcoal)] mb-3">{title}</h3>
-        <p className="text-[13px] text-[var(--grey)] font-[Jost] font-light leading-relaxed mb-8">
+        <h3 className="font-display text-2xl font-light text-[var(--ink)] mb-3">{title}</h3>
+        <p className="text-[13px] text-[var(--muted)] font-[Jost] font-light leading-relaxed mb-8">
           {message}
         </p>
         <div className="flex items-center gap-3">
